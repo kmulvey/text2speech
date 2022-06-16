@@ -6,7 +6,6 @@ import (
 	"flag"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"net/url"
 	"os"
 	"strings"
@@ -34,50 +33,101 @@ func main() {
 	var awsProfile string
 	var awsRegion string
 	var voiceID string
+	var inputFile string
+	var outputFile string
 	flag.StringVar(&s3Bucket, "bucket", "", "s3 bucket to put the mp3 files")
 	flag.StringVar(&awsProfile, "profile", "default", "aws profile to use")
 	flag.StringVar(&awsRegion, "region", "us-west-2", "aws region to use")
 	flag.StringVar(&voiceID, "voice", "Matthew", "voice to use")
+	flag.StringVar(&inputFile, "input", "", "path the input text file, if this is specified STDIN will be ignored")
+	flag.StringVar(&outputFile, "output", "", "path the save the mp3, this will NOT play the audio")
 
 	flag.Parse()
 
 	var ctx = context.Background()
+
+	// validate input
+	if strings.TrimSpace(s3Bucket) == "" {
+		log.Fatal("s3 bucket not spcecified")
+	}
+	var text = strings.TrimSpace(inputFile)
+	var err error
+	if strings.TrimSpace(inputFile) == "" {
+		text, err = readInput(os.Stdin)
+	}
+	if text == "" {
+		return
+	}
+
+	voice, err := synthesisText(ctx, awsProfile, awsRegion, s3Bucket, voiceID, text)
+	if err != nil {
+		log.Fatal("synthesisText", err)
+	}
+
+	if strings.TrimSpace(outputFile) == "" {
+		if err := writeFile(voice.Body, outputFile); err != nil {
+			log.Fatal("error writing file %v", err)
+		}
+	} else {
+		play(voice.Body)
+	}
+}
+
+func readInput(reader io.Reader) (string, error) {
+	var r = bufio.NewReader(reader)
+	var buf = make([]byte, 0, 4*1024)
+	var builder = strings.Builder{}
+	for {
+		n, err := r.Read(buf[:cap(buf)])
+		buf = buf[:n]
+		if n == 0 {
+			if err == nil {
+				continue
+			}
+			if err == io.EOF {
+				break
+			}
+			return "", fmt.Errorf("input buffer error: %w", err)
+		}
+
+		builder.Write(buf)
+
+		if err != nil && err != io.EOF {
+			return "", fmt.Errorf("input buffer error: %w", err)
+		}
+	}
+	return strings.TrimSpace(builder.String()), nil
 }
 
 // default, us-west-2, Matthew
-func synthesisText(ctx context.Context, awsProfile, awsRegion, bucket, voiceID string) (*s3.GetObjectOutput, error) {
+func synthesisText(ctx context.Context, awsProfile, awsRegion, bucket, voiceID, text string) (*s3.GetObjectOutput, error) {
 
-	text, err := ioutil.ReadAll(bufio.NewReader(os.Stdin))
+	var cfg, err = config.LoadDefaultConfig(ctx, config.WithSharedConfigProfile(awsProfile), config.WithRegion(awsRegion))
 	if err != nil {
-		log.Fatalf("failed to load SDK configuration, %v", err)
-	}
-
-	cfg, err := config.LoadDefaultConfig(ctx, config.WithSharedConfigProfile(awsProfile), config.WithRegion(awsRegion))
-	if err != nil {
-		log.Fatalf("failed to load SDK configuration, %v", err)
+		return nil, fmt.Errorf("failed to load SDK configuration, %w", err)
 	}
 
 	pollyClient := polly.NewFromConfig(cfg)
 	s3Client := s3.NewFromConfig(cfg)
 
-	inputTask := &polly.StartSpeechSynthesisTaskInput{OutputFormat: "mp3", OutputS3BucketName: aws.String(bucket), Text: aws.String(string(text)), VoiceId: types.VoiceId(voiceID)}
+	inputTask := &polly.StartSpeechSynthesisTaskInput{OutputFormat: "mp3", OutputS3BucketName: aws.String(bucket), Text: aws.String(text), VoiceId: types.VoiceId(voiceID)}
 	task, err := pollyClient.StartSpeechSynthesisTask(ctx, inputTask)
 	if err != nil {
-		log.Fatalf("failed to convert to speech, %v", err)
+		return nil, fmt.Errorf("failed to convert to speech, %w", err)
 	}
 
 	var fileURI string
 	for {
 		var sTask, err = pollyClient.GetSpeechSynthesisTask(ctx, &polly.GetSpeechSynthesisTaskInput{TaskId: task.SynthesisTask.TaskId})
 		if err != nil {
-			log.Fatalf("failed to get task status, %v", err)
+			return nil, fmt.Errorf("failed to get task status, %w", err)
 		}
 
 		if sTask.SynthesisTask.TaskStatus == types.TaskStatusCompleted {
 			fileURI = *sTask.SynthesisTask.OutputUri
 			break
 		} else if sTask.SynthesisTask.TaskStatus == types.TaskStatusFailed {
-			log.Fatalf("task failed: err: %v;  reason: %s", err, *sTask.SynthesisTask.TaskStatusReason)
+			return nil, fmt.Errorf("task failed: err: %w;  reason: %s", err, *sTask.SynthesisTask.TaskStatusReason)
 		}
 
 		log.WithFields(log.Fields{
@@ -85,17 +135,17 @@ func synthesisText(ctx context.Context, awsProfile, awsRegion, bucket, voiceID s
 			"id":     *sTask.SynthesisTask.TaskId,
 		}).Info("Synthesis running...")
 
-		time.Sleep(time.Second * 2)
+		time.Sleep(time.Second * 5)
 	}
 
 	s3File, err := url.Parse(fileURI)
 	if err != nil {
-		log.Fatalf("failed to parse s3 uri, %v", err)
+		return nil, fmt.Errorf("failed to parse s3 uri, %w", err)
 	}
 
 	var path = strings.Split(s3File.Path, "/")
 	if len(path) != 3 {
-		log.Fatalf("s3 path is not three elements: %d, %+v", len(path), path)
+		return nil, fmt.Errorf("s3 path is not three elements: %d, %+v", len(path), path)
 	}
 
 	return s3Client.GetObject(ctx, &s3.GetObjectInput{
@@ -163,7 +213,7 @@ func play(sound io.ReadCloser) error {
 			}
 			player.Write(data)
 		}
-		log.Info("over play.")
+		log.Info("Audio complete.")
 		waitForPlayOver.Done()
 	}()
 	waitForPlayOver.Wait()
