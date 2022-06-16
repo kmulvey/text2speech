@@ -54,26 +54,47 @@ func main() {
 	var err error
 	if strings.TrimSpace(inputFile) == "" {
 		text, err = readInput(os.Stdin)
+		if err != nil {
+			log.Fatalf("cannot read input %v", err)
+		}
 	}
 	if text == "" {
 		return
 	}
 
-	voice, err := synthesisText(ctx, awsProfile, awsRegion, s3Bucket, voiceID, text)
+	// create aws clients
+	awsConfig, err := config.LoadDefaultConfig(ctx, config.WithSharedConfigProfile(awsProfile), config.WithRegion(awsRegion))
 	if err != nil {
-		log.Fatal("synthesisText", err)
+		log.Fatalf("failed to load SDK configuration, %v", err)
+	}
+	var pollyClient = polly.NewFromConfig(awsConfig)
+	var s3Client = s3.NewFromConfig(awsConfig)
+
+	// DO IT!
+	voice, s3File, err := synthesisText(ctx, pollyClient, s3Client, s3Bucket, voiceID, text)
+	if err != nil {
+		log.Fatalf("error from synthesisText: %v", err)
 	}
 
+	// output switch
 	if strings.TrimSpace(outputFile) == "" {
 		if err := writeFile(voice.Body, outputFile); err != nil {
-			log.Fatal("error writing file %v", err)
+			log.Fatalf("error writing file %v", err)
 		}
 	} else {
-		play(voice.Body)
+		if err := play(voice.Body); err != nil {
+			log.Fatalf("error playing audio %v", err)
+		}
+	}
+
+	// clean up s3 bucket
+	if err := deleteFile(ctx, s3Client, s3Bucket, s3File); err != nil {
+		log.Fatalf("error deleting s3 files %v", err)
 	}
 }
 
 func readInput(reader io.Reader) (string, error) {
+
 	var r = bufio.NewReader(reader)
 	var buf = make([]byte, 0, 4*1024)
 	var builder = strings.Builder{}
@@ -100,34 +121,26 @@ func readInput(reader io.Reader) (string, error) {
 }
 
 // default, us-west-2, Matthew
-func synthesisText(ctx context.Context, awsProfile, awsRegion, bucket, voiceID, text string) (*s3.GetObjectOutput, error) {
-
-	var cfg, err = config.LoadDefaultConfig(ctx, config.WithSharedConfigProfile(awsProfile), config.WithRegion(awsRegion))
-	if err != nil {
-		return nil, fmt.Errorf("failed to load SDK configuration, %w", err)
-	}
-
-	pollyClient := polly.NewFromConfig(cfg)
-	s3Client := s3.NewFromConfig(cfg)
+func synthesisText(ctx context.Context, pollyClient *polly.Client, s3Client *s3.Client, bucket, voiceID, text string) (*s3.GetObjectOutput, string, error) {
 
 	inputTask := &polly.StartSpeechSynthesisTaskInput{OutputFormat: "mp3", OutputS3BucketName: aws.String(bucket), Text: aws.String(text), VoiceId: types.VoiceId(voiceID)}
 	task, err := pollyClient.StartSpeechSynthesisTask(ctx, inputTask)
 	if err != nil {
-		return nil, fmt.Errorf("failed to convert to speech, %w", err)
+		return nil, "", fmt.Errorf("failed to convert to speech, %w", err)
 	}
 
 	var fileURI string
 	for {
 		var sTask, err = pollyClient.GetSpeechSynthesisTask(ctx, &polly.GetSpeechSynthesisTaskInput{TaskId: task.SynthesisTask.TaskId})
 		if err != nil {
-			return nil, fmt.Errorf("failed to get task status, %w", err)
+			return nil, "", fmt.Errorf("failed to get task status, %w", err)
 		}
 
 		if sTask.SynthesisTask.TaskStatus == types.TaskStatusCompleted {
 			fileURI = *sTask.SynthesisTask.OutputUri
 			break
 		} else if sTask.SynthesisTask.TaskStatus == types.TaskStatusFailed {
-			return nil, fmt.Errorf("task failed: err: %w;  reason: %s", err, *sTask.SynthesisTask.TaskStatusReason)
+			return nil, "", fmt.Errorf("task failed: err: %w;  reason: %s", err, *sTask.SynthesisTask.TaskStatusReason)
 		}
 
 		log.WithFields(log.Fields{
@@ -140,18 +153,20 @@ func synthesisText(ctx context.Context, awsProfile, awsRegion, bucket, voiceID, 
 
 	s3File, err := url.Parse(fileURI)
 	if err != nil {
-		return nil, fmt.Errorf("failed to parse s3 uri, %w", err)
+		return nil, "", fmt.Errorf("failed to parse s3 uri, %w", err)
 	}
 
 	var path = strings.Split(s3File.Path, "/")
 	if len(path) != 3 {
-		return nil, fmt.Errorf("s3 path is not three elements: %d, %+v", len(path), path)
+		return nil, "", fmt.Errorf("s3 path is not three elements: %d, %+v", len(path), path)
 	}
 
-	return s3Client.GetObject(ctx, &s3.GetObjectInput{
+	voice, err := s3Client.GetObject(ctx, &s3.GetObjectInput{
 		Bucket: aws.String(bucket),
 		Key:    &path[2],
 	})
+
+	return voice, path[2], err
 }
 
 func deleteFile(ctx context.Context, s3Client *s3.Client, bucket, key string) error {
@@ -184,7 +199,7 @@ func play(sound io.ReadCloser) error {
 
 	var dec *minimp3.Decoder
 	if dec, err = minimp3.NewDecoder(sound); err != nil {
-		fmt.Errorf("minimp3.NewDecoder: %w", err)
+		return fmt.Errorf("minimp3.NewDecoder: %w", err)
 	}
 	started := dec.Started()
 	<-started
@@ -193,7 +208,7 @@ func play(sound io.ReadCloser) error {
 
 	var context *oto.Context
 	if context, err = oto.NewContext(dec.SampleRate, dec.Channels, 2, 1024); err != nil {
-		fmt.Errorf("oto.NewContext: %w", err)
+		return fmt.Errorf("oto.NewContext: %w", err)
 	}
 
 	var waitForPlayOver = new(sync.WaitGroup)
@@ -211,7 +226,9 @@ func play(sound io.ReadCloser) error {
 			if err != nil {
 				break
 			}
-			player.Write(data)
+			if _, err := player.Write(data); err != nil {
+				log.Fatalf("error feeding player %v", err) // TODO handle this better
+			}
 		}
 		log.Info("Audio complete.")
 		waitForPlayOver.Done()
@@ -222,7 +239,7 @@ func play(sound io.ReadCloser) error {
 	dec.Close()
 
 	if err := player.Close(); err != nil {
-		return fmt.Errorf("error closing player: %v", err)
+		return fmt.Errorf("error closing player: %w", err)
 	}
 	return nil
 }
