@@ -17,7 +17,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/polly"
 	"github.com/aws/aws-sdk-go-v2/service/polly/types"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
-	"github.com/hajimehoshi/oto"
+	"github.com/hajimehoshi/oto/v2"
 	log "github.com/sirupsen/logrus"
 	"github.com/tosone/minimp3"
 )
