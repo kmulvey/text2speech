@@ -22,6 +22,8 @@ import (
 	"github.com/tosone/minimp3"
 )
 
+const MAX_CHAR_COUNT = 200_000
+
 func main() {
 	log.SetFormatter(&log.TextFormatter{
 		FullTimestamp:   true,
