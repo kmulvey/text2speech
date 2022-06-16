@@ -8,10 +8,14 @@ jobs:
     strategy:
       matrix:
         go-version: [1.18.x]
-        os: [ubuntu-latest, macos-latest, windows-latest]
+        os: [ubuntu-latest, macos-latest]
     runs-on: ${{ matrix.os }}
 
     steps:
+      - uses: ConorMacBride/install-package@v1
+        with:
+          apt: libasound2-dev
+      
       - name: Check out code into the Go module directory
         uses: actions/checkout@v2
 
@@ -38,6 +42,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - uses: ConorMacBride/install-package@v1
+        with:
+          apt: libasound2-dev
+      
       - name: Check out code into the Go module directory
         uses: actions/checkout@v2
         with:
