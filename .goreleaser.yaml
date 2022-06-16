@@ -9,6 +9,10 @@ builds:
     main: .
     env:
       - CGO_ENABLED=0
+    ldflags:
+      - -s -w
+    flags:
+      - -v
     goos:
       - linux
       - windows
