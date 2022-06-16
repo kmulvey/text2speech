@@ -21,6 +21,7 @@ import (
 	"github.com/tosone/minimp3"
 )
 
+// TODO handle >200k words
 //const MAX_CHAR_COUNT = 200_000
 
 func main() {
@@ -121,7 +122,6 @@ func readInput(reader io.Reader) (string, error) {
 	return strings.TrimSpace(builder.String()), nil
 }
 
-// default, us-west-2, Matthew
 func synthesisText(ctx context.Context, pollyClient *polly.Client, s3Client *s3.Client, bucket, voiceID, text string) (*s3.GetObjectOutput, string, error) {
 
 	inputTask := &polly.StartSpeechSynthesisTaskInput{OutputFormat: "mp3", OutputS3BucketName: aws.String(bucket), Text: aws.String(text), VoiceId: types.VoiceId(voiceID)}
