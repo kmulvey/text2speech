@@ -9,7 +9,6 @@ import (
 	"net/url"
 	"os"
 	"strings"
-	"sync"
 	"time"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
@@ -79,7 +78,7 @@ func main() {
 	}
 
 	// output switch
-	if strings.TrimSpace(outputFile) == "" {
+	if strings.TrimSpace(outputFile) != "" {
 		if err := writeFile(voice.Body, outputFile); err != nil {
 			log.Fatalf("error writing file %v", err)
 		}
@@ -206,38 +205,20 @@ func play(sound io.ReadCloser) error {
 	started := dec.Started()
 	<-started
 
-	log.Infof("Convert audio sample rate: %d, channels: %d\n", dec.SampleRate, dec.Channels)
+	log.Infof("Playing audio sample rate: %d, channels: %d\n", dec.SampleRate, dec.Channels)
 
 	var context *oto.Context
-	if context, err = oto.NewContext(dec.SampleRate, dec.Channels, 2, 1024); err != nil {
+	context, ready, err := oto.NewContext(dec.SampleRate, dec.Channels, 2)
+	if err != nil {
 		return fmt.Errorf("oto.NewContext: %w", err)
 	}
+	<-ready
 
-	var waitForPlayOver = new(sync.WaitGroup)
-	waitForPlayOver.Add(1)
+	var player = context.NewPlayer(dec)
+	player.Play()
+	for player.IsPlaying() {
+	}
 
-	var player = context.NewPlayer()
-
-	go func() {
-		for {
-			var data = make([]byte, 1024)
-			_, err := dec.Read(data)
-			if err == io.EOF {
-				break
-			}
-			if err != nil {
-				break
-			}
-			if _, err := player.Write(data); err != nil {
-				log.Fatalf("error feeding player %v", err) // TODO handle this better
-			}
-		}
-		log.Info("Audio complete.")
-		waitForPlayOver.Done()
-	}()
-	waitForPlayOver.Wait()
-
-	<-time.After(time.Second)
 	dec.Close()
 
 	if err := player.Close(); err != nil {
