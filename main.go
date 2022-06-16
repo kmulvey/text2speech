@@ -3,6 +3,8 @@ package main
 import (
 	"bufio"
 	"context"
+	"flag"
+	"fmt"
 	"io"
 	"io/ioutil"
 	"net/url"
@@ -21,17 +23,36 @@ import (
 	"github.com/tosone/minimp3"
 )
 
-const bucket = "kmulvey-polly"
-
 func main() {
+	log.SetFormatter(&log.TextFormatter{
+		FullTimestamp:   true,
+		TimestampFormat: "2006-01-02 15:04:05",
+	})
+
+	// get user opts
+	var s3Bucket string
+	var awsProfile string
+	var awsRegion string
+	var voiceID string
+	flag.StringVar(&s3Bucket, "bucket", "", "s3 bucket to put the mp3 files")
+	flag.StringVar(&awsProfile, "profile", "default", "aws profile to use")
+	flag.StringVar(&awsRegion, "region", "us-west-2", "aws region to use")
+	flag.StringVar(&voiceID, "voice", "Matthew", "voice to use")
+
+	flag.Parse()
+
 	var ctx = context.Background()
+}
+
+// default, us-west-2, Matthew
+func synthesisText(ctx context.Context, awsProfile, awsRegion, bucket, voiceID string) (*s3.GetObjectOutput, error) {
 
 	text, err := ioutil.ReadAll(bufio.NewReader(os.Stdin))
 	if err != nil {
 		log.Fatalf("failed to load SDK configuration, %v", err)
 	}
 
-	cfg, err := config.LoadDefaultConfig(ctx, config.WithSharedConfigProfile("default"), config.WithRegion("us-west-2"))
+	cfg, err := config.LoadDefaultConfig(ctx, config.WithSharedConfigProfile(awsProfile), config.WithRegion(awsRegion))
 	if err != nil {
 		log.Fatalf("failed to load SDK configuration, %v", err)
 	}
@@ -39,7 +60,7 @@ func main() {
 	pollyClient := polly.NewFromConfig(cfg)
 	s3Client := s3.NewFromConfig(cfg)
 
-	inputTask := &polly.StartSpeechSynthesisTaskInput{OutputFormat: "mp3", OutputS3BucketName: aws.String(bucket), Text: aws.String(string(text)), VoiceId: "Matthew"}
+	inputTask := &polly.StartSpeechSynthesisTaskInput{OutputFormat: "mp3", OutputS3BucketName: aws.String(bucket), Text: aws.String(string(text)), VoiceId: types.VoiceId(voiceID)}
 	task, err := pollyClient.StartSpeechSynthesisTask(ctx, inputTask)
 	if err != nil {
 		log.Fatalf("failed to convert to speech, %v", err)
@@ -77,45 +98,52 @@ func main() {
 		log.Fatalf("s3 path is not three elements: %d, %+v", len(path), path)
 	}
 
-	resp, err := s3Client.GetObject(ctx, &s3.GetObjectInput{
+	return s3Client.GetObject(ctx, &s3.GetObjectInput{
 		Bucket: aws.String(bucket),
 		Key:    &path[2],
 	})
-
-	play(resp.Body)
-
-	/*
-		outFile, err := os.Create("speech.mp3")
-		if err != nil {
-			log.Fatalf("Got error creating speech.mp3: %v", err)
-		}
-
-		_, err = io.Copy(outFile, resp.Body)
-		if err != nil {
-			log.Fatalf("error writing mp3: %v", err)
-		}
-
-		if err := outFile.Close(); err != nil {
-			log.Fatalf("error closing file: %v", err)
-		}
-	*/
 }
 
-func play(sound io.ReadCloser) {
+func deleteFile(ctx context.Context, s3Client *s3.Client, bucket, key string) error {
+	var _, err = s3Client.DeleteObject(ctx, &s3.DeleteObjectInput{
+		Bucket: aws.String(bucket),
+		Key:    aws.String(key),
+	})
+	return err
+}
+
+func writeFile(sound io.ReadCloser, filename string) error {
+	outFile, err := os.Create(filename)
+	if err != nil {
+		return fmt.Errorf("Got error creating speech.mp3: %v", err)
+	}
+
+	_, err = io.Copy(outFile, sound)
+	if err != nil {
+		return fmt.Errorf("error writing mp3: %v", err)
+	}
+
+	if err := outFile.Close(); err != nil {
+		return fmt.Errorf("error closing file: %v", err)
+	}
+	return nil
+}
+
+func play(sound io.ReadCloser) error {
 	var err error
 
 	var dec *minimp3.Decoder
 	if dec, err = minimp3.NewDecoder(sound); err != nil {
-		log.Fatal(err)
+		fmt.Errorf("minimp3.NewDecoder: %w", err)
 	}
 	started := dec.Started()
 	<-started
 
-	log.Printf("Convert audio sample rate: %d, channels: %d\n", dec.SampleRate, dec.Channels)
+	log.Infof("Convert audio sample rate: %d, channels: %d\n", dec.SampleRate, dec.Channels)
 
 	var context *oto.Context
 	if context, err = oto.NewContext(dec.SampleRate, dec.Channels, 2, 1024); err != nil {
-		log.Fatal(err)
+		fmt.Errorf("oto.NewContext: %w", err)
 	}
 
 	var waitForPlayOver = new(sync.WaitGroup)
@@ -135,14 +163,16 @@ func play(sound io.ReadCloser) {
 			}
 			player.Write(data)
 		}
-		log.Println("over play.")
+		log.Info("over play.")
 		waitForPlayOver.Done()
 	}()
 	waitForPlayOver.Wait()
 
 	<-time.After(time.Second)
 	dec.Close()
-	if err = player.Close(); err != nil {
-		log.Fatal(err)
+
+	if err := player.Close(); err != nil {
+		return fmt.Errorf("error closing player: %v", err)
 	}
+	return nil
 }
