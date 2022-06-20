@@ -52,7 +52,7 @@ func main() {
 	if strings.TrimSpace(s3Bucket) == "" {
 		log.Fatal("s3 bucket not spcecified")
 	}
-	var text = strings.TrimSpace(inputFile)
+	var text string
 	var err error
 	if strings.TrimSpace(inputFile) != "" {
 		b, err := os.ReadFile(strings.TrimSpace(inputFile))
