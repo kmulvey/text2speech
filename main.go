@@ -54,7 +54,14 @@ func main() {
 	}
 	var text = strings.TrimSpace(inputFile)
 	var err error
-	if strings.TrimSpace(inputFile) == "" {
+	if strings.TrimSpace(inputFile) != "" {
+		b, err := os.ReadFile(strings.TrimSpace(inputFile))
+		if err != nil {
+			log.Fatalf("cannot read input file %s: %v", inputFile, err)
+		}
+		text = string(b)
+
+	} else {
 		text, err = readInput(os.Stdin)
 		if err != nil {
 			log.Fatalf("cannot read input %v", err)
