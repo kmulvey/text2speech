@@ -22,7 +22,8 @@ import (
 )
 
 // TODO handle >200k words
-//const MAX_CHAR_COUNT = 200_000
+const MAX_CHAR_COUNT = 200_000
+const DEFAULT_VOICE = "Matthew"
 
 func main() {
 	log.SetFormatter(&log.TextFormatter{
@@ -52,6 +53,22 @@ func main() {
 	if strings.TrimSpace(s3Bucket) == "" {
 		log.Fatal("s3 bucket not spcecified")
 	}
+
+	if voiceID != DEFAULT_VOICE {
+		var voices = types.VoiceId("").Values()
+		var found bool
+		for _, voice := range voices {
+			if voice == types.VoiceId(voiceID) {
+				found = true
+				break
+			}
+		}
+		if !found {
+			log.Fatalf("VoiceID: %s is not an AWS Polly VoiceID", voiceID)
+		}
+	}
+
+	//var numWords = len(strings.Fields(builder.String()))
 	var text string
 	var err error
 	if strings.TrimSpace(inputFile) != "" {
@@ -126,6 +143,7 @@ func readInput(reader io.Reader) (string, error) {
 			return "", fmt.Errorf("input buffer error: %w", err)
 		}
 	}
+
 	return strings.TrimSpace(builder.String()), nil
 }
 
