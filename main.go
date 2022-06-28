@@ -22,7 +22,7 @@ import (
 )
 
 // TODO handle >200k words
-const MAX_CHAR_COUNT = 200_000
+// const MAX_CHAR_COUNT = 200_000
 const DEFAULT_VOICE = "Matthew"
 
 func main() {
