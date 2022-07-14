@@ -3,7 +3,7 @@
 Convert text to speech using [AWS Polly](https://aws.amazon.com/polly/).
 
 ## Dependencies
-[see oto](https://github.com/hajimehoshi/oto)
+This depends on [oto](https://github.com/hajimehoshi/oto#prerequisite) which has some prerequisites.
 
 ## Example
 ```
