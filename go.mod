@@ -7,7 +7,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/config v1.15.14
 	github.com/aws/aws-sdk-go-v2/service/polly v1.16.2
 	github.com/aws/aws-sdk-go-v2/service/s3 v1.27.1
-	github.com/hajimehoshi/oto/v2 v2.1.0
+	github.com/hajimehoshi/oto/v2 v2.2.0
 	github.com/sirupsen/logrus v1.8.1
 	github.com/tosone/minimp3 v1.0.1
 )
@@ -27,5 +27,5 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/sso v1.11.12 // indirect
 	github.com/aws/aws-sdk-go-v2/service/sts v1.16.9 // indirect
 	github.com/aws/smithy-go v1.12.0 // indirect
-	golang.org/x/sys v0.0.0-20220627191245-f75cf1eec38b // indirect
+	golang.org/x/sys v0.0.0-20220712014510-0a85c31ab51e // indirect
 )
