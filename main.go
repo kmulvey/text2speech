@@ -2,11 +2,13 @@ package main
 
 import (
 	"bufio"
+	"bytes"
 	"context"
 	"errors"
 	"flag"
 	"fmt"
 	"io"
+	"io/ioutil"
 	"net/url"
 	"os"
 	"os/exec"
@@ -21,6 +23,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/polly/types"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"github.com/hajimehoshi/oto/v2"
+	"github.com/schollz/progressbar/v3"
 	log "github.com/sirupsen/logrus"
 	"github.com/tosone/minimp3"
 )
@@ -106,23 +109,36 @@ func main() {
 		log.Fatalf("error from synthesisText: %v", err)
 	}
 
-	// get the length
-	if err := writeFile(voice.Body, outputFile); err != nil {
+	// get the audio length using ffmpeg because polly doesnt return it
+	ffmpegSound, err := io.ReadAll(voice.Body)
+	voice.Body = ioutil.NopCloser(bytes.NewBuffer(ffmpegSound))
+	if err := os.WriteFile(outputFile, ffmpegSound, 0775); err != nil {
 		log.Fatalf("error writing file %v", err)
 	}
-	length, err := getLength(outputFile)
-	fmt.Println(length, err)
+	audioLength, err := getLength(outputFile)
 	if err != nil {
 		log.Fatalf("error getting length from ffmpeg: %v", err)
 	}
-	//os.Exit(0)
+
+	// get the progress bar going
+	go func() {
+		time.Sleep(time.Second)
+		bar := progressbar.Default(100)
+		var i float64
+		var pct float64
+		var total float64 = float64(audioLength)
+		for i = 0.0; i < total; i++ {
+			pct = (i / total) * 100
+			bar.Set(int(pct))
+			time.Sleep(time.Second)
+		}
+	}()
 
 	// output switch
-	if strings.TrimSpace(outputFile) == "" {
+	if strings.TrimSpace(outputFile) == "speech.mp3" {
 		if err := os.RemoveAll(outputFile); err != nil {
 			log.Fatalf("error removing file %v", err)
 		}
-	} else {
 		if err := play(voice.Body); err != nil {
 			log.Fatalf("error playing audio %v", err)
 		}
@@ -218,24 +234,7 @@ func deleteFile(ctx context.Context, s3Client *s3.Client, bucket, key string) er
 	return err
 }
 
-func writeFile(sound io.ReadCloser, filename string) error {
-	outFile, err := os.Create(filename)
-	if err != nil {
-		return fmt.Errorf("error creating %s: %v", filename, err)
-	}
-
-	_, err = io.Copy(outFile, sound)
-	if err != nil {
-		return fmt.Errorf("error writing mp3: %v", err)
-	}
-
-	if err := outFile.Close(); err != nil {
-		return fmt.Errorf("error closing file: %v", err)
-	}
-	return nil
-}
-
-func play(sound io.ReadCloser) error {
+func play(sound io.Reader) error {
 	var err error
 
 	var dec *minimp3.Decoder
