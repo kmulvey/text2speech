@@ -111,6 +111,9 @@ func main() {
 
 	// get the audio length using ffmpeg because polly doesnt return it
 	ffmpegSound, err := io.ReadAll(voice.Body)
+	if err != nil {
+		log.Fatalf("error reading voice.Body: %v", err)
+	}
 	voice.Body = ioutil.NopCloser(bytes.NewBuffer(ffmpegSound))
 	if err := os.WriteFile(outputFile, ffmpegSound, 0775); err != nil {
 		log.Fatalf("error writing file %v", err)
@@ -129,7 +132,10 @@ func main() {
 		var total float64 = float64(audioLength)
 		for i = 0.0; i < total; i++ {
 			pct = (i / total) * 100
-			bar.Set(int(pct))
+			err = bar.Set(int(pct))
+			if err != nil {
+				log.Fatal("error setting bar: ", err.Error())
+			}
 			time.Sleep(time.Second)
 		}
 	}()

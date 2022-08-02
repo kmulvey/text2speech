@@ -11,7 +11,6 @@ require (
 	github.com/hajimehoshi/oto/v2 v2.2.0
 	github.com/schollz/progressbar/v3 v3.9.0
 	github.com/sirupsen/logrus v1.9.0
-	github.com/tosone/minimp3 v1.0.1
 )
 
 require (
