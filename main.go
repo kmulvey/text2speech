@@ -22,10 +22,10 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/polly"
 	"github.com/aws/aws-sdk-go-v2/service/polly/types"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
+	"github.com/hajimehoshi/go-mp3"
 	"github.com/hajimehoshi/oto/v2"
 	"github.com/schollz/progressbar/v3"
 	log "github.com/sirupsen/logrus"
-	"github.com/tosone/minimp3"
 )
 
 // TODO handle >200k words
@@ -235,30 +235,24 @@ func deleteFile(ctx context.Context, s3Client *s3.Client, bucket, key string) er
 }
 
 func play(sound io.Reader) error {
-	var err error
 
-	var dec *minimp3.Decoder
-	if dec, err = minimp3.NewDecoder(sound); err != nil {
-		return fmt.Errorf("minimp3.NewDecoder: %w", err)
+	// Decode file
+	var decodedMp3, err = mp3.NewDecoder(sound)
+	if err != nil {
+		panic("mp3.NewDecoder failed: " + err.Error())
 	}
-	started := dec.Started()
-	<-started
 
-	log.Infof("Playing audio sample rate: %d, channels: %d\n", dec.SampleRate, dec.Channels)
-
-	var context *oto.Context
-	context, ready, err := oto.NewContext(dec.SampleRate, dec.Channels, 2)
+	otoCtx, ready, err := oto.NewContext(decodedMp3.SampleRate(), 2, 2)
 	if err != nil {
 		return fmt.Errorf("oto.NewContext: %w", err)
 	}
 	<-ready
 
-	var player = context.NewPlayer(dec)
+	var player = otoCtx.NewPlayer(decodedMp3)
 	player.Play()
 	for player.IsPlaying() {
+		time.Sleep(time.Millisecond)
 	}
-
-	dec.Close()
 
 	if err := player.Close(); err != nil {
 		return fmt.Errorf("error closing player: %w", err)
