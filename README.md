@@ -1,4 +1,5 @@
 # text2speech
+[![text2speech](https://github.com/kmulvey/text2speech/actions/workflows/release_build.yml/badge.svg)](https://github.com/kmulvey/text2speech/actions/workflows/release_build.yml)
 
 Convert text to speech using [AWS Polly](https://aws.amazon.com/polly/).
 
