@@ -115,7 +115,7 @@ func main() {
 	if err != nil {
 		log.Fatalf("error getting length from ffmpeg: %v", err)
 	}
-	os.Exit(0)
+	//os.Exit(0)
 
 	// output switch
 	if strings.TrimSpace(outputFile) == "" {
