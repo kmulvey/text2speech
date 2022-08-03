@@ -125,8 +125,7 @@ func main() {
 
 	// get the progress bar going
 	go func() {
-		time.Sleep(time.Second)
-		bar := progressbar.Default(100)
+		bar := progressbar.NewOptions(100, progressbar.OptionSetPredictTime(false), progressbar.OptionFullWidth())
 		var i float64
 		var pct float64
 		var total float64 = float64(audioLength)
