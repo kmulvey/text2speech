@@ -8,7 +8,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/polly v1.17.4
 	github.com/aws/aws-sdk-go-v2/service/s3 v1.27.5
 	github.com/hajimehoshi/go-mp3 v0.3.3
-	github.com/hajimehoshi/oto/v2 v2.2.0
+	github.com/hajimehoshi/oto/v2 v2.3.0
 	github.com/schollz/progressbar/v3 v3.9.0
 	github.com/sirupsen/logrus v1.9.0
 )
