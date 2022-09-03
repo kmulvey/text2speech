@@ -3,12 +3,12 @@ module github.com/kmulvey/text2speech
 go 1.18
 
 require (
-	github.com/aws/aws-sdk-go-v2 v1.16.11
+	github.com/aws/aws-sdk-go-v2 v1.16.14
 	github.com/aws/aws-sdk-go-v2/config v1.17.1
 	github.com/aws/aws-sdk-go-v2/service/polly v1.17.4
 	github.com/aws/aws-sdk-go-v2/service/s3 v1.27.5
 	github.com/hajimehoshi/go-mp3 v0.3.3
-	github.com/hajimehoshi/oto/v2 v2.2.0
+	github.com/hajimehoshi/oto/v2 v2.3.0
 	github.com/schollz/progressbar/v3 v3.9.0
 	github.com/sirupsen/logrus v1.9.0
 )
@@ -27,7 +27,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/internal/s3shared v1.13.12 // indirect
 	github.com/aws/aws-sdk-go-v2/service/sso v1.11.17 // indirect
 	github.com/aws/aws-sdk-go-v2/service/sts v1.16.13 // indirect
-	github.com/aws/smithy-go v1.12.1 // indirect
+	github.com/aws/smithy-go v1.13.2 // indirect
 	github.com/mattn/go-runewidth v0.0.13 // indirect
 	github.com/mitchellh/colorstring v0.0.0-20190213212951-d06e56a500db // indirect
 	github.com/rivo/uniseg v0.3.1 // indirect
