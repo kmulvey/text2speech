@@ -26,6 +26,8 @@ import (
 	"github.com/hajimehoshi/oto/v2"
 	"github.com/schollz/progressbar/v3"
 	log "github.com/sirupsen/logrus"
+	"go.szostok.io/version"
+	"go.szostok.io/version/printer"
 )
 
 // TODO handle >200k words
@@ -45,14 +47,26 @@ func main() {
 	var voiceID string
 	var inputFile string
 	var outputFile string
+	var v bool
 	flag.StringVar(&s3Bucket, "bucket", "", "s3 bucket to put the mp3 files")
 	flag.StringVar(&awsProfile, "profile", "default", "aws profile to use")
 	flag.StringVar(&awsRegion, "region", "us-west-2", "aws region to use")
 	flag.StringVar(&voiceID, "voice", "Matthew", "voice to use")
 	flag.StringVar(&inputFile, "input", "", "path the input text file, if this is specified STDIN will be ignored")
 	flag.StringVar(&outputFile, "output", "speech.mp3", "path the save the mp3, this will NOT play the audio")
+	flag.BoolVar(&v, "version", false, "print version")
+	flag.BoolVar(&v, "v", false, "print version")
 
 	flag.Parse()
+
+	if v {
+		var verPrinter = printer.New()
+		var info = version.Get()
+		if err := verPrinter.PrintInfo(os.Stdout, info); err != nil {
+			log.Fatal(err)
+		}
+		os.Exit(0)
+	}
 
 	var ctx = context.Background()
 
@@ -124,6 +138,7 @@ func main() {
 	}
 
 	// get the progress bar going
+	var progressBarDone = make(chan struct{})
 	go func() {
 		bar := progressbar.NewOptions(100, progressbar.OptionSetPredictTime(false), progressbar.OptionFullWidth())
 		var i float64
@@ -141,6 +156,8 @@ func main() {
 		if err != nil {
 			log.Fatal("error setting bar: ", err.Error())
 		}
+		fmt.Println()
+		close(progressBarDone)
 	}()
 
 	// output switch
@@ -157,6 +174,7 @@ func main() {
 	if err := deleteFile(ctx, s3Client, s3Bucket, s3File); err != nil {
 		log.Fatalf("error deleting s3 files %v", err)
 	}
+	<-progressBarDone
 }
 
 func readInput(reader io.Reader) (string, error) {
