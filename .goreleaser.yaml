@@ -4,12 +4,11 @@ before:
   hooks:
     # You may remove this if you don't use go modules.
     - go mod tidy
-    # you may remove this if you don't need go generate
-    - go build -v .
 builds:
-  - env:
+  - 
+    env:
       - CGO_ENABLED=1
-  - ldflags:
+    ldflags:
       - -s -w
       - -X go.szostok.io/version.version={{.Version}}
       - -X go.szostok.io/version.buildDate={{.Date}}
