@@ -1,5 +1,5 @@
 # text2speech
-[![text2speech](https://github.com/kmulvey/text2speech/actions/workflows/release_build.yml/badge.svg)](https://github.com/kmulvey/text2speech/actions/workflows/release_build.yml)
+[![text2speech](https://github.com/kmulvey/text2speech/actions/workflows/release_build.yml/badge.svg)](https://github.com/kmulvey/text2speech/actions/workflows/release_build.yml) [![Go Report Card](https://goreportcard.com/badge/github.com/kmulvey/imageconvert)](https://goreportcard.com/report/github.com/kmulvey/imageconvert) [![Go Reference](https://pkg.go.dev/badge/github.com/kmulvey/imageconvert.svg)](https://pkg.go.dev/github.com/kmulvey/imageconvert)
 
 Convert text to speech using [AWS Polly](https://aws.amazon.com/polly/).
 
