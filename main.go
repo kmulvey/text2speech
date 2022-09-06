@@ -137,6 +137,10 @@ func main() {
 			}
 			time.Sleep(time.Second)
 		}
+		err = bar.Set(100)
+		if err != nil {
+			log.Fatal("error setting bar: ", err.Error())
+		}
 	}()
 
 	// output switch
