@@ -16,6 +16,7 @@ import (
 	"strconv"
 	"strings"
 	"time"
+	"unicode"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/config"
@@ -30,8 +31,7 @@ import (
 	"go.szostok.io/version/printer"
 )
 
-// TODO handle >200k words
-// const MAX_CHAR_COUNT = 200_000
+const MAX_CHAR_COUNT = 200_000
 const DEFAULT_VOICE = "Matthew"
 
 func main() {
@@ -89,7 +89,6 @@ func main() {
 		}
 	}
 
-	//var numWords = len(strings.Fields(builder.String()))
 	var text string
 	var err error
 	if strings.TrimSpace(inputFile) != "" {
@@ -132,7 +131,7 @@ func main() {
 	if err := os.WriteFile(outputFile, ffmpegSound, 0775); err != nil {
 		log.Fatalf("error writing file %v", err)
 	}
-	audioLength, err := getLength(outputFile)
+	audioLength, err := getDuration(outputFile)
 	if err != nil {
 		log.Fatalf("error getting length from ffmpeg: %v", err)
 	}
@@ -203,6 +202,35 @@ func readInput(reader io.Reader) (string, error) {
 	}
 
 	return strings.TrimSpace(builder.String()), nil
+}
+
+func splitInput(fulltext string) []string {
+	var numWords = len(strings.Fields(fulltext))
+
+	if numWords < MAX_CHAR_COUNT {
+		return []string{fulltext}
+	}
+
+	var result []string
+	var fulltextWords = strings.FieldsFunc(fulltext, isSpace)
+	var lastEndIndex int
+	for i := MAX_CHAR_COUNT; i >= 0; i-- {
+		if strings.HasSuffix(fulltextWords[i], ".") {
+			result = append(result, strings.Join(fulltextWords[lastEndIndex:i+1], " "))
+			lastEndIndex = i + 1
+			i += MAX_CHAR_COUNT
+			if i >= len(fulltextWords) {
+				result = append(result, strings.Join(fulltextWords[lastEndIndex:], " "))
+				break
+			}
+		}
+	}
+
+	return result
+}
+
+func isSpace(c rune) bool {
+	return unicode.IsSpace(c)
 }
 
 func synthesisText(ctx context.Context, pollyClient *polly.Client, s3Client *s3.Client, bucket, voiceID, text string) (*s3.GetObjectOutput, string, error) {
@@ -287,9 +315,9 @@ func play(sound io.Reader) error {
 	return nil
 }
 
-// getLength uses ffmpeg to get the duration of the audio because its not
+// getDuration uses ffmpeg to get the duration of the audio because its not
 // returned by polly. The return value is seconds.
-func getLength(filename string) (int, error) {
+func getDuration(filename string) (int, error) {
 	var imagePath = EscapeFilePath(filename)
 	out, err := exec.Command("bash", "-c", fmt.Sprintf("ffmpeg -hide_banner -i %s -f null /dev/null", imagePath)).CombinedOutput()
 	if err != nil {
