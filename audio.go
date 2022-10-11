@@ -18,10 +18,9 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"github.com/hajimehoshi/go-mp3"
 	"github.com/hajimehoshi/oto/v2"
-	log "github.com/sirupsen/logrus"
 )
 
-func synthesisText(ctx context.Context, pollyClient *polly.Client, s3Client *s3.Client, bucket, voiceID, text string) (*s3.GetObjectOutput, string, error) {
+func synthesizeText(ctx context.Context, pollyClient *polly.Client, s3Client *s3.Client, bucket, voiceID, text string) (*s3.GetObjectOutput, string, error) {
 
 	inputTask := &polly.StartSpeechSynthesisTaskInput{OutputFormat: "mp3", OutputS3BucketName: aws.String(bucket), Text: aws.String(text), VoiceId: types.VoiceId(voiceID)}
 	task, err := pollyClient.StartSpeechSynthesisTask(ctx, inputTask)
@@ -43,10 +42,10 @@ func synthesisText(ctx context.Context, pollyClient *polly.Client, s3Client *s3.
 			return nil, "", fmt.Errorf("task failed: err: %w;  reason: %s", err, *sTask.SynthesisTask.TaskStatusReason)
 		}
 
-		log.WithFields(log.Fields{
-			"status": sTask.SynthesisTask.TaskStatus,
-			"id":     *sTask.SynthesisTask.TaskId,
-		}).Info("Synthesis running...")
+		//log.WithFields(log.Fields{
+		//	"status": sTask.SynthesisTask.TaskStatus,
+		//	"id":     *sTask.SynthesisTask.TaskId,
+		//}).Info("Synthesis running...")
 
 		time.Sleep(time.Second * 5)
 	}
