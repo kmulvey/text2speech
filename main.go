@@ -14,11 +14,15 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/polly"
 	"github.com/aws/aws-sdk-go-v2/service/polly/types"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
-	"github.com/schollz/progressbar/v3"
 	log "github.com/sirupsen/logrus"
 	"go.szostok.io/version"
 	"go.szostok.io/version/printer"
 )
+
+type PlaybackProgress struct {
+	Total   int
+	Current int
+}
 
 const MAX_CHAR_COUNT = 100 //200_000
 const DEFAULT_VOICE = "Matthew"
@@ -106,14 +110,17 @@ func main() {
 	var s3Client = s3.NewFromConfig(awsConfig)
 	var audioChan = make(chan *s3.GetObjectOutput, 5)
 	var errors = make(chan error)
+	var playbackProgress = make(chan PlaybackProgress)
 
-	go playWithProgressBar(audioChan, errors)
-	handleOutput(ctx, pollyClient, s3Client, audioChan, s3Bucket, voiceID, text, outputFile)
+	go playWithProgressBar(audioChan, playbackProgress, errors)
+	if err := handleOutput(ctx, pollyClient, s3Client, audioChan, s3Bucket, voiceID, text, outputFile); err != nil {
+		log.Fatalf("handleOutput error: %s", err.Error())
+	}
 	<-errors
 }
 
 // handleOutput synthesizes text and either writes the result to a file or a channel for playing. File writing and playing are exclusize and is determined by cli flags.
-func handleOutput(ctx context.Context, pollyClient *polly.Client, s3Client *s3.Client, audioChan chan *s3.GetObjectOutput, s3Bucket, voiceID, text, outputFile string) {
+func handleOutput(ctx context.Context, pollyClient *polly.Client, s3Client *s3.Client, audioChan chan *s3.GetObjectOutput, s3Bucket, voiceID, text, outputFile string) error {
 
 	// splitting the input allows us to handle input that is larger than the max input size of polly (200k)
 	var textSections = splitInput(text)
@@ -121,17 +128,17 @@ func handleOutput(ctx context.Context, pollyClient *polly.Client, s3Client *s3.C
 	for _, section := range textSections {
 		voice, s3File, err := synthesizeText(ctx, pollyClient, s3Client, s3Bucket, voiceID, section)
 		if err != nil {
-			log.Fatalf("error from synthesisText: %v", err)
+			return fmt.Errorf("error from synthesisText: %v", err)
 		}
 
 		// output switch
 		if strings.TrimSpace(outputFile) != "output.mp3" {
 			body, err := io.ReadAll(voice.Body)
 			if err != nil {
-				log.Fatalf("error reading voice.Body: %v", err)
+				return fmt.Errorf("error reading voice.Body: %v", err)
 			}
 			if err := os.WriteFile(outputFile, body, 0775); err != nil {
-				log.Fatalf("error writing file %v", err)
+				return fmt.Errorf("error writing file %v", err)
 			}
 		} else {
 			audioChan <- voice
@@ -139,14 +146,15 @@ func handleOutput(ctx context.Context, pollyClient *polly.Client, s3Client *s3.C
 
 		// clean up s3 bucket
 		if err := deleteFile(ctx, s3Client, s3Bucket, s3File); err != nil {
-			log.Fatalf("error deleting s3 files %v", err)
+			return fmt.Errorf("error deleting s3 files %v", err)
 		}
 	}
 	close(audioChan)
+	return nil
 }
 
 // playWithProgressBar manages the progess bar and plays the audio
-func playWithProgressBar(audioChan chan *s3.GetObjectOutput, done chan error) {
+func playWithProgressBar(audioChan chan *s3.GetObjectOutput, playbackProgress chan PlaybackProgress, errors chan error) {
 
 	for voice := range audioChan {
 
@@ -154,50 +162,46 @@ func playWithProgressBar(audioChan chan *s3.GetObjectOutput, done chan error) {
 		var tempFile = "ffmpeg-detect-length-temp-file.mp3"
 		ffmpegSound, err := io.ReadAll(voice.Body)
 		if err != nil {
-			log.Fatalf("error reading voice.Body: %v", err)
+			errors <- fmt.Errorf("error reading voice.Body: %v", err)
+			close(errors)
+			return
 		}
 
 		voice.Body = io.NopCloser(bytes.NewBuffer(ffmpegSound))
 		if err := os.WriteFile(tempFile, ffmpegSound, 0775); err != nil {
-			log.Fatalf("error writing file %v", err)
+			errors <- fmt.Errorf("error writing file %v", err)
+			close(errors)
+			return
 		}
 
 		audioLength, err := getDuration(tempFile)
 		if err != nil {
-			log.Fatalf("error getting length from ffmpeg: %v", err)
+			errors <- fmt.Errorf("error getting length from ffmpeg: %v", err)
+			close(errors)
+			return
 		}
 
 		if err := os.RemoveAll(tempFile); err != nil {
-			log.Fatalf("error deleteing temp file %v", err)
+			errors <- fmt.Errorf("error deleteing temp file %v", err)
+			close(errors)
+			return
 		}
 
 		// get the progress bar going
-		var progressBarDone = make(chan struct{})
 		go func() {
-			bar := progressbar.NewOptions(100, progressbar.OptionSetPredictTime(false), progressbar.OptionFullWidth())
-			var i float64
-			var pct float64
-			var total float64 = float64(audioLength)
-			for i = 0.0; i < total; i++ {
-				pct = (i / total) * 100
-				err = bar.Set(int(pct))
-				if err != nil {
-					log.Fatal("error setting bar: ", err.Error())
+			for i := 0; i < audioLength; i++ {
+				playbackProgress <- PlaybackProgress{
+					Current: i,
+					Total:   audioLength,
 				}
 				time.Sleep(time.Second)
 			}
-			err = bar.Set(100)
-			if err != nil {
-				log.Fatal("error setting bar: ", err.Error())
-			}
-			fmt.Println()
-			close(progressBarDone)
+			close(playbackProgress)
 		}()
 
 		if err := play(voice.Body); err != nil {
 			log.Fatalf("error playing audio %v", err)
 		}
-		<-progressBarDone
 	}
-	close(done)
+	close(errors)
 }
