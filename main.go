@@ -24,6 +24,10 @@ type PlaybackProgress struct {
 	Current int
 }
 
+func (p *PlaybackProgress) String() string {
+	return fmt.Sprintf("Total: %d, Current: %d", p.Total, p.Current)
+}
+
 const MAX_CHAR_COUNT = 100 //200_000
 const DEFAULT_VOICE = "Matthew"
 
@@ -42,6 +46,7 @@ func main() {
 	var voiceID string
 	var inputFile string
 	var outputFile string
+	var dashboard bool
 	var v bool
 	flag.StringVar(&s3Bucket, "bucket", "", "s3 bucket to put the mp3 files")
 	flag.StringVar(&awsProfile, "profile", "default", "aws profile to use")
@@ -49,6 +54,7 @@ func main() {
 	flag.StringVar(&voiceID, "voice", "Matthew", "voice to use")
 	flag.StringVar(&inputFile, "input", "", "path the input text file, if this is specified STDIN will be ignored")
 	flag.StringVar(&outputFile, "output", "output.mp3", "path the save the mp3, this will NOT play the audio")
+	flag.BoolVar(&dashboard, "dashboard", false, "use a terminal dashboard")
 	flag.BoolVar(&v, "version", false, "print version")
 	flag.BoolVar(&v, "v", false, "print version")
 
@@ -113,6 +119,10 @@ func main() {
 	var playbackProgress = make(chan PlaybackProgress)
 	var logs = make(chan string)
 
+	if !dashboard {
+		go logOutput(playbackProgress, logs)
+	}
+
 	go playWithProgressBar(audioChan, playbackProgress, errors)
 	go func() {
 		if err := handleOutput(ctx, pollyClient, s3Client, audioChan, logs, s3Bucket, voiceID, text, outputFile); err != nil {
@@ -120,13 +130,21 @@ func main() {
 		}
 	}()
 
-	go func() {
-		<-errors
+	if !dashboard {
+		if err := <-errors; err != nil {
+			fmt.Println(err)
+		}
 		cancel()
-	}()
-
-	if _, err := NewDashboard(ctx, cancel, playbackProgress, logs); err != nil {
-		log.Fatalf("failed to create dashboard, %v", err)
+	} else {
+		go func() {
+			if err := <-errors; err != nil {
+				fmt.Println(err)
+			}
+			cancel()
+		}()
+		if _, err := NewDashboard(ctx, cancel, playbackProgress, logs); err != nil {
+			log.Fatalf("failed to create dashboard, %v", err)
+		}
 	}
 }
 
@@ -209,7 +227,6 @@ func playWithProgressBar(audioChan chan *s3.GetObjectOutput, playbackProgress ch
 				}
 				time.Sleep(time.Second)
 			}
-			close(playbackProgress)
 		}()
 
 		if err := play(voice.Body); err != nil {
@@ -218,4 +235,23 @@ func playWithProgressBar(audioChan chan *s3.GetObjectOutput, playbackProgress ch
 	}
 	close(errors)
 	close(playbackProgress)
+}
+
+func logOutput(playbackProgress chan PlaybackProgress, logs chan string) {
+	for playbackProgress != nil {
+		select {
+		case progress, ok := <-playbackProgress:
+			if !ok {
+				playbackProgress = nil
+				continue
+			}
+			fmt.Printf("Progress: %s \n", progress.String())
+		case log, ok := <-logs:
+			if !ok {
+				logs = nil
+				continue
+			}
+			fmt.Printf("log: %s", log)
+		}
+	}
 }
