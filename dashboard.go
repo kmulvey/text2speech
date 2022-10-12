@@ -48,6 +48,9 @@ func NewDashboard(ctx context.Context, cancel context.CancelFunc, playbackProgre
 		gauge.Border(linestyle.Light),
 		gauge.BorderTitle("Section progress"),
 	)
+	if err != nil {
+		return nil, err
+	}
 
 	dashboard.Logs, err = text.New(text.RollContent(), text.WrapAtWords())
 	if err != nil {
