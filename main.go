@@ -115,9 +115,9 @@ func main() {
 	var pollyClient = polly.NewFromConfig(awsConfig)
 	var s3Client = s3.NewFromConfig(awsConfig)
 	var audioChan = make(chan *s3.GetObjectOutput, 5)
-	var errors = make(chan error, 5)
-	var playbackProgress = make(chan PlaybackProgress, 5)
-	var logs = make(chan string, 5)
+	var errors = make(chan error)
+	var playbackProgress = make(chan PlaybackProgress)
+	var logs = make(chan string)
 
 	if !dashboard {
 		go logOutput(playbackProgress, logs)
