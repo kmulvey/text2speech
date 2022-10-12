@@ -28,7 +28,7 @@ func (p *PlaybackProgress) String() string {
 	return fmt.Sprintf("Total: %d, Current: %d", p.Total, p.Current)
 }
 
-const MAX_CHAR_COUNT = 100 //200_000
+const MAX_CHAR_COUNT = 200_000
 const DEFAULT_VOICE = "Matthew"
 
 func main() {
