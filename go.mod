@@ -3,7 +3,7 @@ module github.com/kmulvey/text2speech
 go 1.18
 
 require (
-	github.com/aws/aws-sdk-go-v2 v1.16.14
+	github.com/aws/aws-sdk-go-v2 v1.16.16
 	github.com/aws/aws-sdk-go-v2/config v1.17.5
 	github.com/aws/aws-sdk-go-v2/service/polly v1.17.7
 	github.com/aws/aws-sdk-go-v2/service/s3 v1.27.9
@@ -33,7 +33,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/sso v1.11.21 // indirect
 	github.com/aws/aws-sdk-go-v2/service/ssooidc v1.13.3 // indirect
 	github.com/aws/aws-sdk-go-v2/service/sts v1.16.17 // indirect
-	github.com/aws/smithy-go v1.13.2 // indirect
+	github.com/aws/smithy-go v1.13.3 // indirect
 	github.com/dustin/go-humanize v1.0.0 // indirect
 	github.com/fatih/color v1.13.0 // indirect
 	github.com/gdamore/encoding v1.0.0 // indirect
