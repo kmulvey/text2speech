@@ -28,6 +28,8 @@ const MAX_CHAR_COUNT = 100 //200_000
 const DEFAULT_VOICE = "Matthew"
 
 func main() {
+	var ctx, cancel = context.WithCancel(context.Background())
+
 	log.SetFormatter(&log.TextFormatter{
 		FullTimestamp:   true,
 		TimestampFormat: "2006-01-02 15:04:05",
@@ -60,8 +62,6 @@ func main() {
 		}
 		os.Exit(0)
 	}
-
-	var ctx = context.Background()
 
 	// validate input
 	if strings.TrimSpace(s3Bucket) == "" {
@@ -111,22 +111,34 @@ func main() {
 	var audioChan = make(chan *s3.GetObjectOutput, 5)
 	var errors = make(chan error)
 	var playbackProgress = make(chan PlaybackProgress)
+	var logs = make(chan string)
 
 	go playWithProgressBar(audioChan, playbackProgress, errors)
-	if err := handleOutput(ctx, pollyClient, s3Client, audioChan, s3Bucket, voiceID, text, outputFile); err != nil {
-		log.Fatalf("handleOutput error: %s", err.Error())
+	go func() {
+		if err := handleOutput(ctx, pollyClient, s3Client, audioChan, logs, s3Bucket, voiceID, text, outputFile); err != nil {
+			log.Fatalf("handleOutput error: %s", err.Error())
+		}
+	}()
+
+	go func() {
+		<-errors
+		cancel()
+	}()
+
+	if _, err := NewDashboard(ctx, cancel, playbackProgress, logs); err != nil {
+		log.Fatalf("failed to create dashboard, %v", err)
 	}
-	<-errors
 }
 
 // handleOutput synthesizes text and either writes the result to a file or a channel for playing. File writing and playing are exclusize and is determined by cli flags.
-func handleOutput(ctx context.Context, pollyClient *polly.Client, s3Client *s3.Client, audioChan chan *s3.GetObjectOutput, s3Bucket, voiceID, text, outputFile string) error {
+func handleOutput(ctx context.Context, pollyClient *polly.Client, s3Client *s3.Client, audioChan chan *s3.GetObjectOutput, logs chan string, s3Bucket, voiceID, text, outputFile string) error {
 
 	// splitting the input allows us to handle input that is larger than the max input size of polly (200k)
 	var textSections = splitInput(text)
-	log.Infof("input text has been slpit into %d sections in order to comply with polly limits", len(textSections))
+	logs <- fmt.Sprintf("input text has been slpit into %d sections in order to comply with polly limits. \n", len(textSections))
+
 	for _, section := range textSections {
-		voice, s3File, err := synthesizeText(ctx, pollyClient, s3Client, s3Bucket, voiceID, section)
+		voice, s3File, err := synthesizeText(ctx, pollyClient, s3Client, logs, s3Bucket, voiceID, section)
 		if err != nil {
 			return fmt.Errorf("error from synthesisText: %v", err)
 		}
@@ -150,6 +162,7 @@ func handleOutput(ctx context.Context, pollyClient *polly.Client, s3Client *s3.C
 		}
 	}
 	close(audioChan)
+	close(logs)
 	return nil
 }
 
@@ -204,4 +217,5 @@ func playWithProgressBar(audioChan chan *s3.GetObjectOutput, playbackProgress ch
 		}
 	}
 	close(errors)
+	close(playbackProgress)
 }

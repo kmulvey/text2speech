@@ -20,7 +20,7 @@ import (
 	"github.com/hajimehoshi/oto/v2"
 )
 
-func synthesizeText(ctx context.Context, pollyClient *polly.Client, s3Client *s3.Client, bucket, voiceID, text string) (*s3.GetObjectOutput, string, error) {
+func synthesizeText(ctx context.Context, pollyClient *polly.Client, s3Client *s3.Client, logs chan string, bucket, voiceID, text string) (*s3.GetObjectOutput, string, error) {
 
 	inputTask := &polly.StartSpeechSynthesisTaskInput{OutputFormat: "mp3", OutputS3BucketName: aws.String(bucket), Text: aws.String(text), VoiceId: types.VoiceId(voiceID)}
 	task, err := pollyClient.StartSpeechSynthesisTask(ctx, inputTask)
@@ -42,10 +42,7 @@ func synthesizeText(ctx context.Context, pollyClient *polly.Client, s3Client *s3
 			return nil, "", fmt.Errorf("task failed: err: %w;  reason: %s", err, *sTask.SynthesisTask.TaskStatusReason)
 		}
 
-		//log.WithFields(log.Fields{
-		//	"status": sTask.SynthesisTask.TaskStatus,
-		//	"id":     *sTask.SynthesisTask.TaskId,
-		//}).Info("Synthesis running...")
+		logs <- fmt.Sprintf("Synthesis running...	status: %s	 id: %s \n", sTask.SynthesisTask.TaskStatus, *sTask.SynthesisTask.TaskId)
 
 		time.Sleep(time.Second * 5)
 	}
