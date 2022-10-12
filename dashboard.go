@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"os"
 
 	"github.com/mum4k/termdash"
 	"github.com/mum4k/termdash/cell"
@@ -11,8 +12,21 @@ import (
 	"github.com/mum4k/termdash/terminal/terminalapi"
 	"github.com/mum4k/termdash/widgets/gauge"
 	"github.com/mum4k/termdash/widgets/text"
+	"github.com/sirupsen/logrus"
 	log "github.com/sirupsen/logrus"
 )
+
+// Errorlog allows us to capture errors without getting trapped by the dashboard
+var Errorlog = logrus.New()
+
+func init() {
+	file, err := os.OpenFile("dashboard_error.log", os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
+	if err == nil {
+		Errorlog.Out = file
+	} else {
+		log.Info("Failed to log to file, using default stderr")
+	}
+}
 
 type Dashboard struct {
 	Logs        *text.Text
@@ -32,7 +46,7 @@ func NewDashboard(ctx context.Context, cancel context.CancelFunc, playbackProgre
 		gauge.Height(1),
 		gauge.Color(cell.ColorNumber(33)),
 		gauge.Border(linestyle.Light),
-		gauge.BorderTitle("Absolute progress"),
+		gauge.BorderTitle("Section progress"),
 	)
 
 	dashboard.Logs, err = text.New(text.RollContent(), text.WrapAtWords())
@@ -77,12 +91,16 @@ func NewDashboard(ctx context.Context, cancel context.CancelFunc, playbackProgre
 
 func (d *Dashboard) SetProgress(playbackProgress chan PlaybackProgress) {
 	for progress := range playbackProgress {
-		d.ProgressBar.Absolute(progress.Current, progress.Total) // TODO handle error
+		if err := d.ProgressBar.Absolute(progress.Current, progress.Total); err != nil {
+			Errorlog.Errorf("Progress: %s, err: %v", progress.String(), err)
+		}
 	}
 }
 
-func (d *Dashboard) WriteLogMessage(messages chan string) {
-	for message := range messages {
-		d.Logs.Write(message) // TODO handle error
+func (d *Dashboard) WriteLogMessage(logs chan string) {
+	for logMessage := range logs {
+		if err := d.Logs.Write(logMessage); err != nil {
+			Errorlog.Errorf("Log: %s, err: %v", logMessage, err)
+		}
 	}
 }

@@ -42,7 +42,7 @@ func synthesizeText(ctx context.Context, pollyClient *polly.Client, s3Client *s3
 			return nil, "", fmt.Errorf("task failed: err: %w;  reason: %s", err, *sTask.SynthesisTask.TaskStatusReason)
 		}
 
-		logs <- fmt.Sprintf("Synthesis running...	status: %s	 id: %s \n", sTask.SynthesisTask.TaskStatus, *sTask.SynthesisTask.TaskId)
+		logs <- fmt.Sprintf("Synthesis running... status: %s, id: %s \n", sTask.SynthesisTask.TaskStatus, *sTask.SynthesisTask.TaskId)
 
 		time.Sleep(time.Second * 5)
 	}

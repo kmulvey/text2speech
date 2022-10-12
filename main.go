@@ -115,9 +115,9 @@ func main() {
 	var pollyClient = polly.NewFromConfig(awsConfig)
 	var s3Client = s3.NewFromConfig(awsConfig)
 	var audioChan = make(chan *s3.GetObjectOutput, 5)
-	var errors = make(chan error)
-	var playbackProgress = make(chan PlaybackProgress)
-	var logs = make(chan string)
+	var errors = make(chan error, 5)
+	var playbackProgress = make(chan PlaybackProgress, 5)
+	var logs = make(chan string, 5)
 
 	if !dashboard {
 		go logOutput(playbackProgress, logs)
@@ -136,6 +136,8 @@ func main() {
 		}
 		cancel()
 	} else {
+		// this is a bit backwards because idealy NewDashboard would be run in a go routine above playWithProgressBar
+		// however the term.Run() call cannot be done in a goroutine so it must be last in this main().
 		go func() {
 			if err := <-errors; err != nil {
 				fmt.Println(err)
@@ -153,7 +155,7 @@ func handleOutput(ctx context.Context, pollyClient *polly.Client, s3Client *s3.C
 
 	// splitting the input allows us to handle input that is larger than the max input size of polly (200k)
 	var textSections = splitInput(text)
-	logs <- fmt.Sprintf("input text has been slpit into %d sections in order to comply with polly limits. \n", len(textSections))
+	logs <- fmt.Sprintf("The input text has been slpit into %d sections in order to comply with polly limits. \n", len(textSections))
 
 	for _, section := range textSections {
 		voice, s3File, err := synthesizeText(ctx, pollyClient, s3Client, logs, s3Bucket, voiceID, section)
