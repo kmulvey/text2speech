@@ -94,7 +94,7 @@ func NewDashboard(ctx context.Context, cancel context.CancelFunc, playbackProgre
 
 func (d *Dashboard) SetProgress(playbackProgress chan PlaybackProgress) {
 	for progress := range playbackProgress {
-		if err := d.ProgressBar.Absolute(progress.Current, progress.Total); err != nil {
+		if err := d.ProgressBar.Percent((progress.Total / progress.Current) * 100); err != nil {
 			Errorlog.Errorf("Progress: %s, err: %v", progress.String(), err)
 		}
 	}
