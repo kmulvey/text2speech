@@ -12,6 +12,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 )
 
+// readInput reads in chunks and returns a string
 func readInput(reader io.Reader) (string, error) {
 
 	var r = bufio.NewReader(reader)
@@ -40,6 +41,8 @@ func readInput(reader io.Reader) (string, error) {
 	return strings.TrimSpace(builder.String()), nil
 }
 
+// splitInput splits the text input into chunks less than MAX_CHAR_COUNT
+// which is the current polly limit per job.
 func splitInput(fulltext string) []string {
 	var numWords = len(strings.Fields(fulltext))
 
@@ -69,7 +72,8 @@ func isSpace(c rune) bool {
 	return unicode.IsSpace(c)
 }
 
-func deleteFile(ctx context.Context, s3Client *s3.Client, bucket, key string) error {
+// deleteS3File deletes the file that polly writes to s3 after we are done playing it.
+func deleteS3File(ctx context.Context, s3Client *s3.Client, bucket, key string) error {
 	var _, err = s3Client.DeleteObject(ctx, &s3.DeleteObjectInput{
 		Bucket: aws.String(bucket),
 		Key:    aws.String(key),

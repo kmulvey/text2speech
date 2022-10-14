@@ -16,7 +16,8 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-// Errorlog allows us to capture errors without getting trapped by the dashboard
+// Errorlog allows us to capture errors without getting trapped by the dashboard.
+// Hopefully this can be removed when all the bugs are eradicated.
 var Errorlog = logrus.New()
 
 func init() {
@@ -28,11 +29,14 @@ func init() {
 	}
 }
 
+// Dashboard is our terminal visualization
 type Dashboard struct {
 	Logs        *text.Text
 	ProgressBar *gauge.Gauge
 }
 
+// NewDashboard is a constructor that builds the terminal dashboard as well as spins up two goroutines (below) that
+// recieve data from the two channels passed in.
 func NewDashboard(ctx context.Context, cancel context.CancelFunc, playbackProgress chan PlaybackProgress, logs chan string) (*Dashboard, error) {
 	var dashboard = new(Dashboard)
 
@@ -92,6 +96,8 @@ func NewDashboard(ctx context.Context, cancel context.CancelFunc, playbackProgre
 	return dashboard, nil
 }
 
+// SetProgress gets playback progress by reading from the given channel and
+// updating the dashboard progress bar accordingly.
 func (d *Dashboard) SetProgress(playbackProgress chan PlaybackProgress) {
 	for progress := range playbackProgress {
 		if err := d.ProgressBar.Percent((progress.Total / progress.Current) * 100); err != nil {
@@ -100,6 +106,8 @@ func (d *Dashboard) SetProgress(playbackProgress chan PlaybackProgress) {
 	}
 }
 
+// WriteLogMessage gets log messages (mostly regarding polly processing status)
+// by reading from the given channel and updating the dashboard text box accordingly.
 func (d *Dashboard) WriteLogMessage(logs chan string) {
 	for logMessage := range logs {
 		if err := d.Logs.Write(logMessage); err != nil {

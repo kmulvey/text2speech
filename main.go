@@ -19,6 +19,7 @@ import (
 	"go.szostok.io/version/printer"
 )
 
+// PlaybackProgress represents how far we have gotten in playing the audio
 type PlaybackProgress struct {
 	Total   int
 	Current int
@@ -28,8 +29,8 @@ func (p *PlaybackProgress) String() string {
 	return fmt.Sprintf("Total: %d, Current: %d", p.Total, p.Current)
 }
 
-const MAX_CHAR_COUNT = 200_000
-const DEFAULT_VOICE = "Matthew"
+const MAX_CHAR_COUNT = 200_000  // this is a polly limit per job
+const DEFAULT_VOICE = "Matthew" // this can be overridden with cli flags
 
 func main() {
 	var ctx, cancel = context.WithCancel(context.Background())
@@ -177,7 +178,7 @@ func handleOutput(ctx context.Context, pollyClient *polly.Client, s3Client *s3.C
 		}
 
 		// clean up s3 bucket
-		if err := deleteFile(ctx, s3Client, s3Bucket, s3File); err != nil {
+		if err := deleteS3File(ctx, s3Client, s3Bucket, s3File); err != nil {
 			return fmt.Errorf("error deleting s3 files %v", err)
 		}
 	}
@@ -239,6 +240,7 @@ func playWithProgressBar(audioChan chan *s3.GetObjectOutput, playbackProgress ch
 	close(playbackProgress)
 }
 
+// logOutput is used to print logs if the dashboard is not in use.
 func logOutput(playbackProgress chan PlaybackProgress, logs chan string) {
 	for playbackProgress != nil {
 		select {

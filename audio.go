@@ -20,6 +20,7 @@ import (
 	"github.com/hajimehoshi/oto/v2"
 )
 
+// synthesizeText takes text and sends it to AWS polly for processing, the polly object containing the audio.
 func synthesizeText(ctx context.Context, pollyClient *polly.Client, s3Client *s3.Client, logs chan string, bucket, voiceID, text string) (*s3.GetObjectOutput, string, error) {
 
 	inputTask := &polly.StartSpeechSynthesisTaskInput{OutputFormat: "mp3", OutputS3BucketName: aws.String(bucket), Text: aws.String(text), VoiceId: types.VoiceId(voiceID)}
@@ -65,6 +66,7 @@ func synthesizeText(ctx context.Context, pollyClient *polly.Client, s3Client *s3
 	return voice, path[2], err
 }
 
+// play does just that (using oto)
 func play(sound io.Reader) error {
 
 	// Decode file
@@ -92,7 +94,8 @@ func play(sound io.Reader) error {
 }
 
 // getDuration uses ffmpeg to get the duration of the audio because its not
-// returned by polly. The return value is seconds.
+// returned by polly. The return value is seconds. Hopefully polly adds the
+// duration in the return data and we dont have to do this anymore.
 func getDuration(filename string) (int, error) {
 	var imagePath = EscapeFilePath(filename)
 	out, err := exec.Command("bash", "-c", fmt.Sprintf("ffmpeg -hide_banner -i %s -f null /dev/null", imagePath)).CombinedOutput()
