@@ -100,7 +100,12 @@ func NewDashboard(ctx context.Context, cancel context.CancelFunc, playbackProgre
 // updating the dashboard progress bar accordingly.
 func (d *Dashboard) SetProgress(playbackProgress chan PlaybackProgress) {
 	for progress := range playbackProgress {
-		if err := d.ProgressBar.Percent((progress.Total / progress.Current) * 100); err != nil {
+		var pct float64
+		// dont divide by 0
+		if progress.Current > 0 && progress.Total > 0 {
+			pct = (float64(progress.Current) / float64(progress.Total)) * 100.0
+		}
+		if err := d.ProgressBar.Percent(int(pct)); err != nil {
 			Errorlog.Errorf("Progress: %s, err: %v", progress.String(), err)
 		}
 	}
