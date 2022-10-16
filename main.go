@@ -249,7 +249,12 @@ func logOutput(playbackProgress chan PlaybackProgress, logs chan string) {
 				playbackProgress = nil
 				continue
 			}
-			fmt.Printf("Progress: %s \n", progress.String())
+			var pct float64
+			// dont divide by 0
+			if progress.Current > 0 && progress.Total > 0 {
+				pct = (float64(progress.Current) / float64(progress.Total)) * 100.0
+			}
+			fmt.Printf("Progress: %.2f%% \n", pct)
 		case log, ok := <-logs:
 			if !ok {
 				logs = nil
