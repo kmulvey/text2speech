@@ -5,7 +5,7 @@ go 1.18
 require (
 	github.com/aws/aws-sdk-go-v2 v1.17.1
 	github.com/aws/aws-sdk-go-v2/config v1.17.10
-	github.com/aws/aws-sdk-go-v2/service/polly v1.18.2
+	github.com/aws/aws-sdk-go-v2/service/polly v1.20.0
 	github.com/aws/aws-sdk-go-v2/service/s3 v1.27.11
 	github.com/hajimehoshi/go-mp3 v0.3.4
 	github.com/hajimehoshi/oto/v2 v2.3.1
