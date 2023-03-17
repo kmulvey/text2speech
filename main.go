@@ -170,6 +170,7 @@ func handleOutput(ctx context.Context, pollyClient *polly.Client, s3Client *s3.C
 			if err != nil {
 				return fmt.Errorf("error reading voice.Body: %v", err)
 			}
+			//nolint:gosec
 			if err := os.WriteFile(outputFile, body, 0775); err != nil {
 				return fmt.Errorf("error writing file %v", err)
 			}
@@ -202,6 +203,7 @@ func playWithProgressBar(audioChan chan *s3.GetObjectOutput, playbackProgress ch
 		}
 
 		voice.Body = io.NopCloser(bytes.NewBuffer(ffmpegSound))
+		//nolint:gosec
 		if err := os.WriteFile(tempFile, ffmpegSound, 0775); err != nil {
 			errors <- fmt.Errorf("error writing file %v", err)
 			close(errors)
@@ -216,7 +218,7 @@ func playWithProgressBar(audioChan chan *s3.GetObjectOutput, playbackProgress ch
 		}
 
 		if err := os.RemoveAll(tempFile); err != nil {
-			errors <- fmt.Errorf("error deleteing temp file %v", err)
+			errors <- fmt.Errorf("error deleting temp file %v", err)
 			close(errors)
 			return
 		}

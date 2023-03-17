@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"os"
 
 	"github.com/mum4k/termdash"
@@ -36,7 +37,7 @@ type Dashboard struct {
 }
 
 // NewDashboard is a constructor that builds the terminal dashboard as well as spins up two goroutines (below) that
-// recieve data from the two channels passed in.
+// receive data from the two channels passed in.
 func NewDashboard(ctx context.Context, cancel context.CancelFunc, playbackProgress chan PlaybackProgress, logs chan string) (*Dashboard, error) {
 	var dashboard = new(Dashboard)
 
@@ -90,7 +91,7 @@ func NewDashboard(ctx context.Context, cancel context.CancelFunc, playbackProgre
 	go dashboard.WriteLogMessage(logs)
 
 	if err := termdash.Run(ctx, term, c, termdash.KeyboardSubscriber(quitter)); err != nil {
-		log.Fatalf("Error running dashboard, err: %s", err.Error())
+		return nil, fmt.Errorf("Error running dashboard, err: %s", err.Error())
 	}
 
 	return dashboard, nil

@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"net/url"
+	"os"
 	"os/exec"
 	"regexp"
 	"strconv"
@@ -97,18 +98,21 @@ func play(sound io.Reader) error {
 // returned by polly. The return value is seconds. Hopefully polly adds the
 // duration in the return data and we dont have to do this anymore.
 func getDuration(filename string) (int, error) {
+
+	if _, err := os.Stat(filename); err != nil {
+		return 0, err
+	}
+
 	var imagePath = EscapeFilePath(filename)
+	//nolint:gosec
 	out, err := exec.Command("bash", "-c", fmt.Sprintf("ffmpeg -hide_banner -i %s -f null /dev/null", imagePath)).CombinedOutput()
 	if err != nil {
 		return 0, fmt.Errorf("error running ffmpeg on image: %s, error: %s, output: %s", imagePath, err.Error(), out)
 	}
 
 	// create regex and find the duration in the ffmpeg output
-	r, err := regexp.Compile(`Duration:\s\d\d:\d\d:\d\d.\d\d`)
-	if err != nil {
-		return 0, err
-	}
-	var match = r.FindString(string(out))
+	var durationRegex = regexp.MustCompile(`Duration:\s\d\d:\d\d:\d\d.\d\d`)
+	var match = durationRegex.FindString(string(out))
 	if match == "" {
 		return 0, errors.New("unable to get duration from ffmpeg")
 	}
