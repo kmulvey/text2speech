@@ -1,0 +1,1208 @@
+- semver: 1.0.0
+  date: 2022-10-12T13:58:30-06:00
+  packager: Kevin Mulvey <kmulvey@linux.com>
+  changes:
+    - commit: 2ac28be8dc0d0f40b3df8824af7547b37c571590
+      note: report card badge
+      author:
+        name: Kevin Mulvey
+        email: kmulvey@linux.com
+      committer:
+        name: GitHub
+        email: noreply@github.com
+    - commit: 95d9ac4a5e082a103911e2e8f13e98f635d6abde
+      note: readme notes
+      author:
+        name: Kevin Mulvey
+        email: kmulvey@linux.com
+      committer:
+        name: GitHub
+        email: noreply@github.com
+    - commit: 6ff7908a6a03c95522a590d689df3dc3bee1e2e9
+      note: handle error
+      author:
+        name: Kevin Mulvey
+        email: kmulvey@linux.com
+      committer:
+        name: Kevin Mulvey
+        email: kmulvey@linux.com
+    - commit: edcd0668b2fe4ac92aba95c141e9bfc4359f6d79
+      note: reset max size
+      author:
+        name: Kevin Mulvey
+        email: kmulvey@linux.com
+      committer:
+        name: Kevin Mulvey
+        email: kmulvey@linux.com
+    - commit: 5e49fc293dd3f7929ba567e0b8b715647a4fb6ee
+      note: remove buffering
+      author:
+        name: Kevin Mulvey
+        email: kmulvey@linux.com
+      committer:
+        name: Kevin Mulvey
+        email: kmulvey@linux.com
+    - commit: 9f11a6be1727ab4ac8ae5c0ee2a3c63cfcf669d2
+      note: dashboard finally working
+      author:
+        name: Kevin Mulvey
+        email: kmulvey@linux.com
+      committer:
+        name: Kevin Mulvey
+        email: kmulvey@linux.com
+    - commit: 62457ca2ab5b0e871b0e1e0e2e52b079d52497bf
+      note: make dashboard optional
+      author:
+        name: Kevin Mulvey
+        email: kmulvey@linux.com
+      committer:
+        name: Kevin Mulvey
+        email: kmulvey@linux.com
+    - commit: 892fa825d2493eda47340d888de0d2dcd189b899
+      note: dashboard deps
+      author:
+        name: Kevin Mulvey
+        email: kmulvey@linux.com
+      committer:
+        name: Kevin Mulvey
+        email: kmulvey@linux.com
+    - commit: 675c9f82a620d19ff73478a945c2e26fce051e14
+      note: stream to dashboard
+      author:
+        name: Kevin Mulvey
+        email: kmulvey@linux.com
+      committer:
+        name: Kevin Mulvey
+        email: kmulvey@linux.com
+    - commit: 6307769b2aa764ceae24aed50d809167d769e048
+      note: handle errors and start replacing progress bar
+      author:
+        name: Kevin Mulvey
+        email: kmulvey@linux.com
+      committer:
+        name: Kevin Mulvey
+        email: kmulvey@linux.com
+    - commit: de1c087755e5ab523a363d9d55833a8cb70d6efb
+      note: channel
+      author:
+        name: Kevin Mulvey
+        email: kmulvey@linux.com
+      committer:
+        name: Kevin Mulvey
+        email: kmulvey@linux.com
+    - commit: c2c6d40d9dfdb136107a2244692f7d1c160bdc94
+      note: split test under polly limit
+      author:
+        name: Kevin Mulvey
+        email: kmulvey@linux.com
+      committer:
+        name: Kevin Mulvey
+        email: kmulvey@linux.com
+    - commit: af2eae7bbeee53cc117e0e09bb56f32a06bfe935
+      note: splitInput
+      author:
+        name: Kevin Mulvey
+        email: kmulvey@linux.com
+      committer:
+        name: Kevin Mulvey
+        email: kmulvey@linux.com
+    - commit: 3bcff97c631f5dc20606f1140d1a395d1ffee8e0
+      note: |-
+        Merge pull request #52 from kmulvey/dependabot/go_modules/github.com/hajimehoshi/oto/v2-2.3.1
+
+        Bump github.com/hajimehoshi/oto/v2 from 2.3.0 to 2.3.1
+      author:
+        name: Kevin Mulvey
+        email: kmulvey@linux.com
+      committer:
+        name: GitHub
+        email: noreply@github.com
+    - commit: ed860bd0f428a9e19d0dd7bc0d88ac88f9a3832f
+      note: |-
+        Bump github.com/hajimehoshi/oto/v2 from 2.3.0 to 2.3.1
+
+        Bumps [github.com/hajimehoshi/oto/v2](https://github.com/hajimehoshi/oto) from 2.3.0 to 2.3.1.
+        - [Release notes](https://github.com/hajimehoshi/oto/releases)
+        - [Commits](https://github.com/hajimehoshi/oto/compare/v2.3.0...v2.3.1)
+
+        ---
+        updated-dependencies:
+        - dependency-name: github.com/hajimehoshi/oto/v2
+          dependency-type: direct:production
+          update-type: version-update:semver-patch
+        ...
+      author:
+        name: dependabot[bot]
+        email: 49699333+dependabot[bot]@users.noreply.github.com
+      committer:
+        name: GitHub
+        email: noreply@github.com
+    - commit: cd09d9173f8147bcbb8005f375a6952dfa77a755
+      note: |-
+        Merge pull request #51 from kmulvey/dependabot/go_modules/github.com/schollz/progressbar/v3-3.11.0
+
+        Bump github.com/schollz/progressbar/v3 from 3.10.1 to 3.11.0
+      author:
+        name: Kevin Mulvey
+        email: kmulvey@linux.com
+      committer:
+        name: GitHub
+        email: noreply@github.com
+    - commit: fb6e6a016916bdd92179091883350c28e1516d51
+      note: |-
+        Bump github.com/schollz/progressbar/v3 from 3.10.1 to 3.11.0
+
+        Bumps [github.com/schollz/progressbar/v3](https://github.com/schollz/progressbar) from 3.10.1 to 3.11.0.
+        - [Release notes](https://github.com/schollz/progressbar/releases)
+        - [Commits](https://github.com/schollz/progressbar/compare/v3.10.1...v3.11.0)
+
+        ---
+        updated-dependencies:
+        - dependency-name: github.com/schollz/progressbar/v3
+          dependency-type: direct:production
+          update-type: version-update:semver-minor
+        ...
+      author:
+        name: dependabot[bot]
+        email: 49699333+dependabot[bot]@users.noreply.github.com
+      committer:
+        name: GitHub
+        email: noreply@github.com
+- semver: 0.7.2
+  date: 2022-09-06T15:41:34-06:00
+  packager: Kevin Mulvey <kmulvey@linux.com>
+  changes:
+    - commit: e6bbaa11a96e0160b8f93b1f2b73975108e7bf86
+      note: .goreleaser.yaml typo
+      author:
+        name: Kevin Mulvey
+        email: kmulvey@linux.com
+      committer:
+        name: Kevin Mulvey
+        email: kmulvey@linux.com
+- semver: 0.7.0
+  date: 2022-09-06T15:35:33-06:00
+  packager: Kevin Mulvey <kmulvey@linux.com>
+  changes:
+    - commit: be4539f062935404420f06a7c7292cce4e68c782
+      note: add space after 100%, add version print
+      author:
+        name: Kevin Mulvey
+        email: kmulvey@linux.com
+      committer:
+        name: Kevin Mulvey
+        email: kmulvey@linux.com
+    - commit: 0e31d3ecaab5bd31f8b359d8e719f6ab43f9a990
+      note: add space after 100%, add version print
+      author:
+        name: Kevin Mulvey
+        email: kmulvey@linux.com
+      committer:
+        name: Kevin Mulvey
+        email: kmulvey@linux.com
+- semver: 0.6.0
+  date: 2022-09-06T09:33:38-06:00
+  packager: Kevin Mulvey <kmulvey@linux.com>
+  changes:
+    - commit: 55225c7858a857b144e95dfd8bbe92561326f754
+      note: badges
+      author:
+        name: Kevin Mulvey
+        email: kmulvey@linux.com
+      committer:
+        name: GitHub
+        email: noreply@github.com
+    - commit: 2c0ba6db8186fba6b0ce78d49de95541b71c268e
+      note: deps
+      author:
+        name: Kevin Mulvey
+        email: kmulvey@linux.com
+      committer:
+        name: Kevin Mulvey
+        email: kmulvey@linux.com
+    - commit: 22e43dd34724836f9dfd1cf5fc3e946f2f231cd5
+      note: "100"
+      author:
+        name: Kevin Mulvey
+        email: kmulvey@linux.com
+      committer:
+        name: Kevin Mulvey
+        email: kmulvey@linux.com
+    - commit: df35d82c63beef01bb2371f0fc8dde33215a6b35
+      note: |-
+        Merge pull request #48 from kmulvey/dependabot/go_modules/github.com/aws/aws-sdk-go-v2/config-1.17.5
+
+        Bump github.com/aws/aws-sdk-go-v2/config from 1.17.1 to 1.17.5
+      author:
+        name: Kevin Mulvey
+        email: kmulvey@linux.com
+      committer:
+        name: GitHub
+        email: noreply@github.com
+    - commit: 26aee99ec6f0fc18029ba59f97e428079b7e4011
+      note: |-
+        Bump github.com/aws/aws-sdk-go-v2/config from 1.17.1 to 1.17.5
+
+        Bumps [github.com/aws/aws-sdk-go-v2/config](https://github.com/aws/aws-sdk-go-v2) from 1.17.1 to 1.17.5.
+        - [Release notes](https://github.com/aws/aws-sdk-go-v2/releases)
+        - [Changelog](https://github.com/aws/aws-sdk-go-v2/blob/main/CHANGELOG.md)
+        - [Commits](https://github.com/aws/aws-sdk-go-v2/compare/config/v1.17.1...config/v1.17.5)
+
+        ---
+        updated-dependencies:
+        - dependency-name: github.com/aws/aws-sdk-go-v2/config
+          dependency-type: direct:production
+          update-type: version-update:semver-patch
+        ...
+      author:
+        name: dependabot[bot]
+        email: 49699333+dependabot[bot]@users.noreply.github.com
+      committer:
+        name: GitHub
+        email: noreply@github.com
+    - commit: 7ae64be5177687a8f88058f760a23c055be61330
+      note: |-
+        Merge pull request #47 from kmulvey/dependabot/go_modules/github.com/aws/aws-sdk-go-v2/service/polly-1.17.7
+
+        Bump github.com/aws/aws-sdk-go-v2/service/polly from 1.17.4 to 1.17.7
+      author:
+        name: Kevin Mulvey
+        email: kmulvey@linux.com
+      committer:
+        name: GitHub
+        email: noreply@github.com
+    - commit: b85dff5c0701e6e60b0aece7c2cad90b34e99f28
+      note: |-
+        Bump github.com/aws/aws-sdk-go-v2/service/polly from 1.17.4 to 1.17.7
+
+        Bumps [github.com/aws/aws-sdk-go-v2/service/polly](https://github.com/aws/aws-sdk-go-v2) from 1.17.4 to 1.17.7.
+        - [Release notes](https://github.com/aws/aws-sdk-go-v2/releases)
+        - [Changelog](https://github.com/aws/aws-sdk-go-v2/blob/main/CHANGELOG.md)
+        - [Commits](https://github.com/aws/aws-sdk-go-v2/compare/config/v1.17.4...service/ecr/v1.17.7)
+
+        ---
+        updated-dependencies:
+        - dependency-name: github.com/aws/aws-sdk-go-v2/service/polly
+          dependency-type: direct:production
+          update-type: version-update:semver-patch
+        ...
+      author:
+        name: dependabot[bot]
+        email: 49699333+dependabot[bot]@users.noreply.github.com
+      committer:
+        name: GitHub
+        email: noreply@github.com
+    - commit: be1795af75e991cebe24e5304a0e36ae63ec7472
+      note: |-
+        Merge pull request #46 from kmulvey/dependabot/go_modules/github.com/aws/aws-sdk-go-v2/service/s3-1.27.9
+
+        Bump github.com/aws/aws-sdk-go-v2/service/s3 from 1.27.5 to 1.27.9
+      author:
+        name: Kevin Mulvey
+        email: kmulvey@linux.com
+      committer:
+        name: GitHub
+        email: noreply@github.com
+    - commit: a91662803b528fd45bd2dbd593088379db16ba0c
+      note: |-
+        Bump github.com/aws/aws-sdk-go-v2/service/s3 from 1.27.5 to 1.27.9
+
+        Bumps [github.com/aws/aws-sdk-go-v2/service/s3](https://github.com/aws/aws-sdk-go-v2) from 1.27.5 to 1.27.9.
+        - [Release notes](https://github.com/aws/aws-sdk-go-v2/releases)
+        - [Changelog](https://github.com/aws/aws-sdk-go-v2/blob/main/CHANGELOG.md)
+        - [Commits](https://github.com/aws/aws-sdk-go-v2/compare/service/s3/v1.27.5...service/s3/v1.27.9)
+
+        ---
+        updated-dependencies:
+        - dependency-name: github.com/aws/aws-sdk-go-v2/service/s3
+          dependency-type: direct:production
+          update-type: version-update:semver-patch
+        ...
+      author:
+        name: dependabot[bot]
+        email: 49699333+dependabot[bot]@users.noreply.github.com
+      committer:
+        name: GitHub
+        email: noreply@github.com
+    - commit: 8c3cfb575dd3170b1b1fec1fe8f752e2cfadb0f7
+      note: |-
+        Merge pull request #40 from kmulvey/dependabot/go_modules/github.com/hajimehoshi/oto/v2-2.3.0
+
+        Bump github.com/hajimehoshi/oto/v2 from 2.2.0 to 2.3.0
+      author:
+        name: Kevin Mulvey
+        email: kmulvey@linux.com
+      committer:
+        name: GitHub
+        email: noreply@github.com
+    - commit: 90f3d83d5d956dd3f8acd06df2e0682912186651
+      note: |-
+        Bump github.com/hajimehoshi/oto/v2 from 2.2.0 to 2.3.0
+
+        Bumps [github.com/hajimehoshi/oto/v2](https://github.com/hajimehoshi/oto) from 2.2.0 to 2.3.0.
+        - [Release notes](https://github.com/hajimehoshi/oto/releases)
+        - [Commits](https://github.com/hajimehoshi/oto/compare/v2.2.0...v2.3.0)
+
+        ---
+        updated-dependencies:
+        - dependency-name: github.com/hajimehoshi/oto/v2
+          dependency-type: direct:production
+          update-type: version-update:semver-minor
+        ...
+      author:
+        name: dependabot[bot]
+        email: 49699333+dependabot[bot]@users.noreply.github.com
+      committer:
+        name: GitHub
+        email: noreply@github.com
+    - commit: e3badc6eee60c554158d11fcafc9dd2a51cc4dc9
+      note: |-
+        Merge pull request #33 from kmulvey/dependabot/go_modules/github.com/aws/aws-sdk-go-v2/config-1.17.1
+
+        Bump github.com/aws/aws-sdk-go-v2/config from 1.15.15 to 1.17.1
+      author:
+        name: Kevin Mulvey
+        email: kmulvey@linux.com
+      committer:
+        name: GitHub
+        email: noreply@github.com
+    - commit: c6ee4d04b7f41bcaf912d2d1eb31ee8f27cd6136
+      note: |-
+        Bump github.com/aws/aws-sdk-go-v2/config from 1.15.15 to 1.17.1
+
+        Bumps [github.com/aws/aws-sdk-go-v2/config](https://github.com/aws/aws-sdk-go-v2) from 1.15.15 to 1.17.1.
+        - [Release notes](https://github.com/aws/aws-sdk-go-v2/releases)
+        - [Changelog](https://github.com/aws/aws-sdk-go-v2/blob/main/CHANGELOG.md)
+        - [Commits](https://github.com/aws/aws-sdk-go-v2/compare/config/v1.15.15...config/v1.17.1)
+
+        ---
+        updated-dependencies:
+        - dependency-name: github.com/aws/aws-sdk-go-v2/config
+          dependency-type: direct:production
+          update-type: version-update:semver-minor
+        ...
+      author:
+        name: dependabot[bot]
+        email: 49699333+dependabot[bot]@users.noreply.github.com
+      committer:
+        name: GitHub
+        email: noreply@github.com
+    - commit: fbbf0bdf67756e5320e31dfa482c7f81fa23f77c
+      note: |-
+        Merge pull request #31 from kmulvey/dependabot/go_modules/github.com/aws/aws-sdk-go-v2/service/s3-1.27.5
+
+        Bump github.com/aws/aws-sdk-go-v2/service/s3 from 1.27.2 to 1.27.5
+      author:
+        name: Kevin Mulvey
+        email: kmulvey@linux.com
+      committer:
+        name: GitHub
+        email: noreply@github.com
+    - commit: 6d6aa8f6ea9aad42b8e974cc74ac279e645906ee
+      note: |-
+        Bump github.com/aws/aws-sdk-go-v2/service/s3 from 1.27.2 to 1.27.5
+
+        Bumps [github.com/aws/aws-sdk-go-v2/service/s3](https://github.com/aws/aws-sdk-go-v2) from 1.27.2 to 1.27.5.
+        - [Release notes](https://github.com/aws/aws-sdk-go-v2/releases)
+        - [Changelog](https://github.com/aws/aws-sdk-go-v2/blob/main/CHANGELOG.md)
+        - [Commits](https://github.com/aws/aws-sdk-go-v2/compare/service/s3/v1.27.2...service/s3/v1.27.5)
+
+        ---
+        updated-dependencies:
+        - dependency-name: github.com/aws/aws-sdk-go-v2/service/s3
+          dependency-type: direct:production
+          update-type: version-update:semver-patch
+        ...
+      author:
+        name: dependabot[bot]
+        email: 49699333+dependabot[bot]@users.noreply.github.com
+      committer:
+        name: GitHub
+        email: noreply@github.com
+    - commit: 0038c54396e33a21a19aace91b6a6958814d1218
+      note: |-
+        Merge pull request #30 from kmulvey/dependabot/go_modules/github.com/aws/aws-sdk-go-v2/service/polly-1.17.4
+
+        Bump github.com/aws/aws-sdk-go-v2/service/polly from 1.17.1 to 1.17.4
+      author:
+        name: Kevin Mulvey
+        email: kmulvey@linux.com
+      committer:
+        name: GitHub
+        email: noreply@github.com
+    - commit: 830a210783bb469395f3450bf1658863f10590c4
+      note: |-
+        Bump github.com/aws/aws-sdk-go-v2/service/polly from 1.17.1 to 1.17.4
+
+        Bumps [github.com/aws/aws-sdk-go-v2/service/polly](https://github.com/aws/aws-sdk-go-v2) from 1.17.1 to 1.17.4.
+        - [Release notes](https://github.com/aws/aws-sdk-go-v2/releases)
+        - [Changelog](https://github.com/aws/aws-sdk-go-v2/blob/main/CHANGELOG.md)
+        - [Commits](https://github.com/aws/aws-sdk-go-v2/compare/service/ecr/v1.17.1...service/ecr/v1.17.4)
+
+        ---
+        updated-dependencies:
+        - dependency-name: github.com/aws/aws-sdk-go-v2/service/polly
+          dependency-type: direct:production
+          update-type: version-update:semver-patch
+        ...
+      author:
+        name: dependabot[bot]
+        email: 49699333+dependabot[bot]@users.noreply.github.com
+      committer:
+        name: GitHub
+        email: noreply@github.com
+    - commit: f9382cab7547abf0638d59f3b9a19c02a612cf2e
+      note: |-
+        Merge pull request #29 from kmulvey/dependabot/go_modules/github.com/aws/aws-sdk-go-v2-1.16.11
+
+        Bump github.com/aws/aws-sdk-go-v2 from 1.16.8 to 1.16.11
+      author:
+        name: Kevin Mulvey
+        email: kmulvey@linux.com
+      committer:
+        name: GitHub
+        email: noreply@github.com
+    - commit: 1f6ed8ffc72783c3fd5cf87d443faa345c56b987
+      note: |-
+        Bump github.com/aws/aws-sdk-go-v2 from 1.16.8 to 1.16.11
+
+        Bumps [github.com/aws/aws-sdk-go-v2](https://github.com/aws/aws-sdk-go-v2) from 1.16.8 to 1.16.11.
+        - [Release notes](https://github.com/aws/aws-sdk-go-v2/releases)
+        - [Changelog](https://github.com/aws/aws-sdk-go-v2/blob/main/CHANGELOG.md)
+        - [Commits](https://github.com/aws/aws-sdk-go-v2/compare/v1.16.8...v1.16.11)
+
+        ---
+        updated-dependencies:
+        - dependency-name: github.com/aws/aws-sdk-go-v2
+          dependency-type: direct:production
+          update-type: version-update:semver-patch
+        ...
+      author:
+        name: dependabot[bot]
+        email: 49699333+dependabot[bot]@users.noreply.github.com
+      committer:
+        name: GitHub
+        email: noreply@github.com
+    - commit: 41865021dbe321546134f95369f8aafb11640fb9
+      note: progressbar opts
+      author:
+        name: Kevin Mulvey
+        email: kmulvey@linux.com
+      committer:
+        name: Kevin Mulvey
+        email: kmulvey@linux.com
+    - commit: 0f821445463bc00c8618a439f71a121b37aeb23d
+      note: build badge
+      author:
+        name: Kevin Mulvey
+        email: kmulvey@linux.com
+      committer:
+        name: GitHub
+        email: noreply@github.com
+    - commit: 65eb3fba1ffe9d5ab947416be42367a7aef10f16
+      note: bump deps
+      author:
+        name: Kevin Mulvey
+        email: kmulvey@linux.com
+      committer:
+        name: Kevin Mulvey
+        email: kmulvey@linux.com
+    - commit: 101f61382e1751b6af52b94ba9da5a8a62b9d570
+      note: |-
+        Merge pull request #18 from kmulvey/dependabot/go_modules/github.com/aws/aws-sdk-go-v2/service/polly-1.17.1
+
+        Bump github.com/aws/aws-sdk-go-v2/service/polly from 1.16.2 to 1.17.1
+      author:
+        name: Kevin Mulvey
+        email: kmulvey@linux.com
+      committer:
+        name: GitHub
+        email: noreply@github.com
+    - commit: 3ced383f08d9d2780ec109ecd6bafe65770fa2f8
+      note: |-
+        Bump github.com/aws/aws-sdk-go-v2/service/polly from 1.16.2 to 1.17.1
+
+        Bumps [github.com/aws/aws-sdk-go-v2/service/polly](https://github.com/aws/aws-sdk-go-v2) from 1.16.2 to 1.17.1.
+        - [Release notes](https://github.com/aws/aws-sdk-go-v2/releases)
+        - [Changelog](https://github.com/aws/aws-sdk-go-v2/blob/main/CHANGELOG.md)
+        - [Commits](https://github.com/aws/aws-sdk-go-v2/compare/v1.16.2...service/ecr/v1.17.1)
+
+        ---
+        updated-dependencies:
+        - dependency-name: github.com/aws/aws-sdk-go-v2/service/polly
+          dependency-type: direct:production
+          update-type: version-update:semver-minor
+        ...
+      author:
+        name: dependabot[bot]
+        email: 49699333+dependabot[bot]@users.noreply.github.com
+      committer:
+        name: GitHub
+        email: noreply@github.com
+    - commit: fd2b474e8b7f596c5a955a98c1615fda2ab1c041
+      note: |-
+        Merge pull request #17 from kmulvey/dependabot/go_modules/github.com/aws/aws-sdk-go-v2/config-1.15.15
+
+        Bump github.com/aws/aws-sdk-go-v2/config from 1.15.14 to 1.15.15
+      author:
+        name: Kevin Mulvey
+        email: kmulvey@linux.com
+      committer:
+        name: GitHub
+        email: noreply@github.com
+    - commit: 7bd1e1bcb64600a223fc8c554f30ed1fa246584b
+      note: |-
+        Bump github.com/aws/aws-sdk-go-v2/config from 1.15.14 to 1.15.15
+
+        Bumps [github.com/aws/aws-sdk-go-v2/config](https://github.com/aws/aws-sdk-go-v2) from 1.15.14 to 1.15.15.
+        - [Release notes](https://github.com/aws/aws-sdk-go-v2/releases)
+        - [Changelog](https://github.com/aws/aws-sdk-go-v2/blob/main/CHANGELOG.md)
+        - [Commits](https://github.com/aws/aws-sdk-go-v2/compare/config/v1.15.14...config/v1.15.15)
+
+        ---
+        updated-dependencies:
+        - dependency-name: github.com/aws/aws-sdk-go-v2/config
+          dependency-type: direct:production
+          update-type: version-update:semver-patch
+        ...
+      author:
+        name: dependabot[bot]
+        email: 49699333+dependabot[bot]@users.noreply.github.com
+      committer:
+        name: GitHub
+        email: noreply@github.com
+    - commit: b24128204d0c4db979969ad76af80ce5b6fd111b
+      note: |-
+        Merge pull request #15 from kmulvey/dependabot/go_modules/github.com/aws/aws-sdk-go-v2/service/s3-1.27.2
+
+        Bump github.com/aws/aws-sdk-go-v2/service/s3 from 1.27.1 to 1.27.2
+      author:
+        name: Kevin Mulvey
+        email: kmulvey@linux.com
+      committer:
+        name: GitHub
+        email: noreply@github.com
+    - commit: 5d3e33c6bef7f916096c22c8aad4cea95b8f8c63
+      note: |-
+        Bump github.com/aws/aws-sdk-go-v2/service/s3 from 1.27.1 to 1.27.2
+
+        Bumps [github.com/aws/aws-sdk-go-v2/service/s3](https://github.com/aws/aws-sdk-go-v2) from 1.27.1 to 1.27.2.
+        - [Release notes](https://github.com/aws/aws-sdk-go-v2/releases)
+        - [Changelog](https://github.com/aws/aws-sdk-go-v2/blob/main/CHANGELOG.md)
+        - [Commits](https://github.com/aws/aws-sdk-go-v2/compare/service/s3/v1.27.1...service/s3/v1.27.2)
+
+        ---
+        updated-dependencies:
+        - dependency-name: github.com/aws/aws-sdk-go-v2/service/s3
+          dependency-type: direct:production
+          update-type: version-update:semver-patch
+        ...
+      author:
+        name: dependabot[bot]
+        email: 49699333+dependabot[bot]@users.noreply.github.com
+      committer:
+        name: GitHub
+        email: noreply@github.com
+    - commit: 749b3081e480f21577d6b464d4167306dbf980d9
+      note: lint errors
+      author:
+        name: Kevin Mulvey
+        email: kmulvey@linux.com
+      committer:
+        name: Kevin Mulvey
+        email: kmulvey@linux.com
+    - commit: aec8f35374a6c6e9be13b499e46bbeacb4c5c015
+      note: switch to hajimehoshi/go-mp3
+      author:
+        name: Kevin Mulvey
+        email: kmulvey@linux.com
+      committer:
+        name: Kevin Mulvey
+        email: kmulvey@linux.com
+    - commit: 9c333a4f5aa279129ec3b6f811ff55fc2bea2564
+      note: progress bar
+      author:
+        name: Kevin Mulvey
+        email: kmulvey@linux.com
+      committer:
+        name: Kevin Mulvey
+        email: kmulvey@linux.com
+    - commit: 80602b1a5d4b55db19ad3945dfbcba16d8e1c6c8
+      note: dont stop
+      author:
+        name: Kevin Mulvey
+        email: kmulvey@linux.com
+      committer:
+        name: Kevin Mulvey
+        email: kmulvey@linux.com
+    - commit: 3df7ae8ed6dd40a5289784611272e0a9b979aefe
+      note: |-
+        Merge pull request #13 from kmulvey/dependabot/go_modules/github.com/hajimehoshi/oto/v2-2.2.0
+
+        Bump github.com/hajimehoshi/oto/v2 from 2.1.0 to 2.2.0
+      author:
+        name: Kevin Mulvey
+        email: kmulvey@linux.com
+      committer:
+        name: GitHub
+        email: noreply@github.com
+    - commit: 0eebfb3c5ac510fa54e178b906ed53bcdcb06da6
+      note: |-
+        Bump github.com/hajimehoshi/oto/v2 from 2.1.0 to 2.2.0
+
+        Bumps [github.com/hajimehoshi/oto/v2](https://github.com/hajimehoshi/oto) from 2.1.0 to 2.2.0.
+        - [Release notes](https://github.com/hajimehoshi/oto/releases)
+        - [Commits](https://github.com/hajimehoshi/oto/compare/v2.1.0...v2.2.0)
+
+        ---
+        updated-dependencies:
+        - dependency-name: github.com/hajimehoshi/oto/v2
+          dependency-type: direct:production
+          update-type: version-update:semver-minor
+        ...
+      author:
+        name: dependabot[bot]
+        email: 49699333+dependabot[bot]@users.noreply.github.com
+      committer:
+        name: GitHub
+        email: noreply@github.com
+    - commit: 5960a445314b0ca3587a13e04b6e5304455fa76c
+      note: |-
+        Merge pull request #12 from kmulvey/dependabot/go_modules/github.com/sirupsen/logrus-1.9.0
+
+        Bump github.com/sirupsen/logrus from 1.8.1 to 1.9.0
+      author:
+        name: Kevin Mulvey
+        email: kmulvey@linux.com
+      committer:
+        name: GitHub
+        email: noreply@github.com
+    - commit: 1182164856390e52997bd7e76ca0dc2406c4cc16
+      note: ffmpeg
+      author:
+        name: Kevin Mulvey
+        email: kmulvey@linux.com
+      committer:
+        name: Kevin Mulvey
+        email: kmulvey@linux.com
+    - commit: 0980e20cf9ab1e1e81fab48dc16e7bed422868ce
+      note: |-
+        Bump github.com/sirupsen/logrus from 1.8.1 to 1.9.0
+
+        Bumps [github.com/sirupsen/logrus](https://github.com/sirupsen/logrus) from 1.8.1 to 1.9.0.
+        - [Release notes](https://github.com/sirupsen/logrus/releases)
+        - [Changelog](https://github.com/sirupsen/logrus/blob/master/CHANGELOG.md)
+        - [Commits](https://github.com/sirupsen/logrus/compare/v1.8.1...v1.9.0)
+
+        ---
+        updated-dependencies:
+        - dependency-name: github.com/sirupsen/logrus
+          dependency-type: direct:production
+          update-type: version-update:semver-minor
+        ...
+      author:
+        name: dependabot[bot]
+        email: 49699333+dependabot[bot]@users.noreply.github.com
+      committer:
+        name: GitHub
+        email: noreply@github.com
+    - commit: 19619a29c42d072918a0087b72ca9f873b23efd4
+      note: |-
+        Merge pull request #11 from kmulvey/dependabot/go_modules/github.com/aws/aws-sdk-go-v2/config-1.15.14
+
+        Bump github.com/aws/aws-sdk-go-v2/config from 1.15.13 to 1.15.14
+      author:
+        name: Kevin Mulvey
+        email: kmulvey@linux.com
+      committer:
+        name: GitHub
+        email: noreply@github.com
+    - commit: 5c73d4a878b5a8b302955bdaf44b157716c0a804
+      note: oto
+      author:
+        name: Kevin Mulvey
+        email: kmulvey@linux.com
+      committer:
+        name: GitHub
+        email: noreply@github.com
+    - commit: d35411a80a6d5c68cdfef41ed82b803492890465
+      note: |-
+        Bump github.com/aws/aws-sdk-go-v2/config from 1.15.13 to 1.15.14
+
+        Bumps [github.com/aws/aws-sdk-go-v2/config](https://github.com/aws/aws-sdk-go-v2) from 1.15.13 to 1.15.14.
+        - [Release notes](https://github.com/aws/aws-sdk-go-v2/releases)
+        - [Changelog](https://github.com/aws/aws-sdk-go-v2/blob/main/CHANGELOG.md)
+        - [Commits](https://github.com/aws/aws-sdk-go-v2/compare/config/v1.15.13...config/v1.15.14)
+
+        ---
+        updated-dependencies:
+        - dependency-name: github.com/aws/aws-sdk-go-v2/config
+          dependency-type: direct:production
+          update-type: version-update:semver-patch
+        ...
+      author:
+        name: dependabot[bot]
+        email: 49699333+dependabot[bot]@users.noreply.github.com
+      committer:
+        name: GitHub
+        email: noreply@github.com
+- semver: 0.5.0
+  date: 2022-07-09T11:47:23-06:00
+  packager: Kevin Mulvey <kmulvey@linux.com>
+  changes:
+    - commit: fcfc06102cc47ccfcbb7e5afb4ae29782d4b3773
+      note: |-
+        Merge pull request #9 from kmulvey/dependabot/go_modules/github.com/aws/aws-sdk-go-v2/service/polly-1.16.2
+
+        Bump github.com/aws/aws-sdk-go-v2/service/polly from 1.16.1 to 1.16.2
+      author:
+        name: Kevin Mulvey
+        email: kmulvey@linux.com
+      committer:
+        name: GitHub
+        email: noreply@github.com
+    - commit: 103386e6c8b0503347cb13f2124aa59fc7e4b9f7
+      note: |-
+        Bump github.com/aws/aws-sdk-go-v2/service/polly from 1.16.1 to 1.16.2
+
+        Bumps [github.com/aws/aws-sdk-go-v2/service/polly](https://github.com/aws/aws-sdk-go-v2) from 1.16.1 to 1.16.2.
+        - [Release notes](https://github.com/aws/aws-sdk-go-v2/releases)
+        - [Changelog](https://github.com/aws/aws-sdk-go-v2/blob/main/CHANGELOG.md)
+        - [Commits](https://github.com/aws/aws-sdk-go-v2/compare/v1.16.1...v1.16.2)
+
+        ---
+        updated-dependencies:
+        - dependency-name: github.com/aws/aws-sdk-go-v2/service/polly
+          dependency-type: direct:production
+          update-type: version-update:semver-patch
+        ...
+      author:
+        name: dependabot[bot]
+        email: 49699333+dependabot[bot]@users.noreply.github.com
+      committer:
+        name: GitHub
+        email: noreply@github.com
+    - commit: 64515d1552b7cef4a1e3fee4d7e022f431f0d82a
+      note: |-
+        Merge pull request #8 from kmulvey/dependabot/go_modules/github.com/aws/aws-sdk-go-v2/service/s3-1.27.1
+
+        Bump github.com/aws/aws-sdk-go-v2/service/s3 from 1.26.12 to 1.27.1
+      author:
+        name: Kevin Mulvey
+        email: kmulvey@linux.com
+      committer:
+        name: GitHub
+        email: noreply@github.com
+    - commit: 6962636b82443b36d39fad694ec9736b7218c445
+      note: |-
+        Bump github.com/aws/aws-sdk-go-v2/service/s3 from 1.26.12 to 1.27.1
+
+        Bumps [github.com/aws/aws-sdk-go-v2/service/s3](https://github.com/aws/aws-sdk-go-v2) from 1.26.12 to 1.27.1.
+        - [Release notes](https://github.com/aws/aws-sdk-go-v2/releases)
+        - [Changelog](https://github.com/aws/aws-sdk-go-v2/blob/main/CHANGELOG.md)
+        - [Commits](https://github.com/aws/aws-sdk-go-v2/compare/service/s3/v1.26.12...service/s3/v1.27.1)
+
+        ---
+        updated-dependencies:
+        - dependency-name: github.com/aws/aws-sdk-go-v2/service/s3
+          dependency-type: direct:production
+          update-type: version-update:semver-minor
+        ...
+      author:
+        name: dependabot[bot]
+        email: 49699333+dependabot[bot]@users.noreply.github.com
+      committer:
+        name: GitHub
+        email: noreply@github.com
+    - commit: 4de29471ca2109951fe5fff197ac10271f7b20cf
+      note: |-
+        Merge pull request #7 from kmulvey/dependabot/go_modules/github.com/aws/aws-sdk-go-v2/config-1.15.13
+
+        Bump github.com/aws/aws-sdk-go-v2/config from 1.15.12 to 1.15.13
+      author:
+        name: Kevin Mulvey
+        email: kmulvey@linux.com
+      committer:
+        name: GitHub
+        email: noreply@github.com
+    - commit: 2e550ce4f0bbe36250d26ebc33acb92438db386d
+      note: |-
+        Bump github.com/aws/aws-sdk-go-v2/config from 1.15.12 to 1.15.13
+
+        Bumps [github.com/aws/aws-sdk-go-v2/config](https://github.com/aws/aws-sdk-go-v2) from 1.15.12 to 1.15.13.
+        - [Release notes](https://github.com/aws/aws-sdk-go-v2/releases)
+        - [Changelog](https://github.com/aws/aws-sdk-go-v2/blob/main/CHANGELOG.md)
+        - [Commits](https://github.com/aws/aws-sdk-go-v2/compare/config/v1.15.12...config/v1.15.13)
+
+        ---
+        updated-dependencies:
+        - dependency-name: github.com/aws/aws-sdk-go-v2/config
+          dependency-type: direct:production
+          update-type: version-update:semver-patch
+        ...
+      author:
+        name: dependabot[bot]
+        email: 49699333+dependabot[bot]@users.noreply.github.com
+      committer:
+        name: GitHub
+        email: noreply@github.com
+    - commit: c36ae699926030f0febb4520b4455823e0d74ee9
+      note: |-
+        Merge pull request #3 from kmulvey/dependabot/go_modules/github.com/aws/aws-sdk-go-v2/config-1.15.12
+
+        Bump github.com/aws/aws-sdk-go-v2/config from 1.15.11 to 1.15.12
+      author:
+        name: Kevin Mulvey
+        email: kmulvey@linux.com
+      committer:
+        name: GitHub
+        email: noreply@github.com
+    - commit: 0914d0afe65a7c7512b4c3a850a33575d3219bd4
+      note: |-
+        Bump github.com/aws/aws-sdk-go-v2/config from 1.15.11 to 1.15.12
+
+        Bumps [github.com/aws/aws-sdk-go-v2/config](https://github.com/aws/aws-sdk-go-v2) from 1.15.11 to 1.15.12.
+        - [Release notes](https://github.com/aws/aws-sdk-go-v2/releases)
+        - [Changelog](https://github.com/aws/aws-sdk-go-v2/blob/main/CHANGELOG.md)
+        - [Commits](https://github.com/aws/aws-sdk-go-v2/compare/config/v1.15.11...config/v1.15.12)
+
+        ---
+        updated-dependencies:
+        - dependency-name: github.com/aws/aws-sdk-go-v2/config
+          dependency-type: direct:production
+          update-type: version-update:semver-patch
+        ...
+      author:
+        name: dependabot[bot]
+        email: 49699333+dependabot[bot]@users.noreply.github.com
+      committer:
+        name: GitHub
+        email: noreply@github.com
+    - commit: 136d8c79265384ae204a32ea3e219c788c30d7b4
+      note: |-
+        Merge pull request #2 from kmulvey/dependabot/go_modules/github.com/aws/aws-sdk-go-v2/service/s3-1.26.12
+
+        Bump github.com/aws/aws-sdk-go-v2/service/s3 from 1.26.11 to 1.26.12
+      author:
+        name: Kevin Mulvey
+        email: kmulvey@linux.com
+      committer:
+        name: GitHub
+        email: noreply@github.com
+    - commit: 056f500c78d833cb4177776315f39941d0211707
+      note: |-
+        Bump github.com/aws/aws-sdk-go-v2/service/s3 from 1.26.11 to 1.26.12
+
+        Bumps [github.com/aws/aws-sdk-go-v2/service/s3](https://github.com/aws/aws-sdk-go-v2) from 1.26.11 to 1.26.12.
+        - [Release notes](https://github.com/aws/aws-sdk-go-v2/releases)
+        - [Changelog](https://github.com/aws/aws-sdk-go-v2/blob/main/CHANGELOG.md)
+        - [Commits](https://github.com/aws/aws-sdk-go-v2/compare/service/s3/v1.26.11...service/s3/v1.26.12)
+
+        ---
+        updated-dependencies:
+        - dependency-name: github.com/aws/aws-sdk-go-v2/service/s3
+          dependency-type: direct:production
+          update-type: version-update:semver-patch
+        ...
+      author:
+        name: dependabot[bot]
+        email: 49699333+dependabot[bot]@users.noreply.github.com
+      committer:
+        name: GitHub
+        email: noreply@github.com
+    - commit: 96384515ce06e634fa2ebee96254fcb8eb9cbae7
+      note: |-
+        Merge pull request #5 from kmulvey/dependabot/go_modules/github.com/aws/aws-sdk-go-v2/service/polly-1.16.1
+
+        Bump github.com/aws/aws-sdk-go-v2/service/polly from 1.15.3 to 1.16.1
+      author:
+        name: Kevin Mulvey
+        email: kmulvey@linux.com
+      committer:
+        name: GitHub
+        email: noreply@github.com
+    - commit: 43011d3188edf704ac1c4d6f3429a0428946b865
+      note: |-
+        Bump github.com/aws/aws-sdk-go-v2/service/polly from 1.15.3 to 1.16.1
+
+        Bumps [github.com/aws/aws-sdk-go-v2/service/polly](https://github.com/aws/aws-sdk-go-v2) from 1.15.3 to 1.16.1.
+        - [Release notes](https://github.com/aws/aws-sdk-go-v2/releases)
+        - [Changelog](https://github.com/aws/aws-sdk-go-v2/blob/main/CHANGELOG.md)
+        - [Commits](https://github.com/aws/aws-sdk-go-v2/compare/config/v1.15.3...v1.16.1)
+
+        ---
+        updated-dependencies:
+        - dependency-name: github.com/aws/aws-sdk-go-v2/service/polly
+          dependency-type: direct:production
+          update-type: version-update:semver-minor
+        ...
+      author:
+        name: dependabot[bot]
+        email: 49699333+dependabot[bot]@users.noreply.github.com
+      committer:
+        name: GitHub
+        email: noreply@github.com
+- semver: 0.4.0
+  date: 2022-06-28T12:30:02-06:00
+  packager: Kevin Mulvey <kmulvey@linux.com>
+  changes:
+    - commit: 406f899d467ba21741c8cb569eecc23ae4890bda
+      note: desp
+      author:
+        name: Kevin Mulvey
+        email: kmulvey@linux.com
+      committer:
+        name: Kevin Mulvey
+        email: kmulvey@linux.com
+    - commit: 44bad0ad280b2cf1af37740041db2d7d616eb4a3
+      note: max count later
+      author:
+        name: Kevin Mulvey
+        email: kmulvey@linux.com
+      committer:
+        name: Kevin Mulvey
+        email: kmulvey@linux.com
+    - commit: ae842b64fa09e1b0b8377dfa23027b49cb8a21f0
+      note: validate voiceID
+      author:
+        name: Kevin Mulvey
+        email: kmulvey@linux.com
+      committer:
+        name: Kevin Mulvey
+        email: kmulvey@linux.com
+    - commit: ad744b32b72233ceb7a0cb4ce88d199f2cf35d42
+      note: me
+      author:
+        name: Kevin Mulvey
+        email: kmulvey@linux.com
+      committer:
+        name: GitHub
+        email: noreply@github.com
+    - commit: 4fd6190aca223599e7918b9ac65463baea6896f1
+      note: vuln scan
+      author:
+        name: Kevin Mulvey
+        email: kmulvey@linux.com
+      committer:
+        name: GitHub
+        email: noreply@github.com
+    - commit: c0ce5bd509ccf5ca10ab5f0006e63d19389fc08f
+      note: deps
+      author:
+        name: Kevin Mulvey
+        email: kmulvey@linux.com
+      committer:
+        name: GitHub
+        email: noreply@github.com
+- semver: 0.3.0
+  date: 2022-06-20T11:35:19-06:00
+  packager: Kevin Mulvey <kmulvey@linux.com>
+  changes:
+    - commit: 7526bd6bf2c2d08aee4cef7e6ec8018b5390fdcf
+      note: deps
+      author:
+        name: Kevin Mulvey
+        email: kmulvey@linux.com
+      committer:
+        name: Kevin Mulvey
+        email: kmulvey@linux.com
+    - commit: a8f93f85e30ef6ebca7ece084036804f337a7c0b
+      note: linting
+      author:
+        name: Kevin Mulvey
+        email: kmulvey@linux.com
+      committer:
+        name: Kevin Mulvey
+        email: kmulvey@linux.com
+    - commit: 7ee43070b6b43e132c72aacd186fac8a66858aee
+      note: correct if() block
+      author:
+        name: Kevin Mulvey
+        email: kmulvey@linux.com
+      committer:
+        name: Kevin Mulvey
+        email: kmulvey@linux.com
+- semver: 0.2.0
+  date: 2022-06-16T16:59:56-06:00
+  packager: Kevin Mulvey <kmulvey@linux.com>
+  changes:
+    - commit: 20b76feec78455595ab981129f4368f87850d963
+      note: remove mac for now
+      author:
+        name: Kevin Mulvey
+        email: kmulvey@linux.com
+      committer:
+        name: Kevin Mulvey
+        email: kmulvey@linux.com
+    - commit: eb4c28640d74e1d76385811dca4432a1a98d33d2
+      note: more deps
+      author:
+        name: Kevin Mulvey
+        email: kmulvey@linux.com
+      committer:
+        name: Kevin Mulvey
+        email: kmulvey@linux.com
+    - commit: c9a8f050586922f3add21eefde4dbecae0f1514f
+      note: v3
+      author:
+        name: Kevin Mulvey
+        email: kmulvey@linux.com
+      committer:
+        name: Kevin Mulvey
+        email: kmulvey@linux.com
+    - commit: 03699b07f3733f3727d37a6a1bac6962f4aa06c2
+      note: rebuild
+      author:
+        name: Kevin Mulvey
+        email: kmulvey@linux.com
+      committer:
+        name: Kevin Mulvey
+        email: kmulvey@linux.com
+    - commit: ae8623649bff857532417c28eb7bea4f1fff0336
+      note: build
+      author:
+        name: Kevin Mulvey
+        email: kmulvey@linux.com
+      committer:
+        name: Kevin Mulvey
+        email: kmulvey@linux.com
+    - commit: d9bae28c370a92bfcf51218f954ee8c0c96b92d7
+      note: more build stuff
+      author:
+        name: Kevin Mulvey
+        email: kmulvey@linux.com
+      committer:
+        name: Kevin Mulvey
+        email: kmulvey@linux.com
+    - commit: 1baebc37a90b49f02a9f4e9e535e1dc1a37ca598
+      note: Update README.md
+      author:
+        name: Kevin Mulvey
+        email: kmulvey@linux.com
+      committer:
+        name: GitHub
+        email: noreply@github.com
+    - commit: 76ee7c157746b83c429179ac248a8334ab33f0a5
+      note: build flags
+      author:
+        name: Kevin Mulvey
+        email: kmulvey@linux.com
+      committer:
+        name: Kevin Mulvey
+        email: kmulvey@linux.com
+    - commit: e638acf11be68b705de727b47ffdf4c38af31a5e
+      note: only amd64
+      author:
+        name: Kevin Mulvey
+        email: kmulvey@linux.com
+      committer:
+        name: Kevin Mulvey
+        email: kmulvey@linux.com
+- semver: 0.1.0
+  date: 2022-06-16T12:26:38-06:00
+  packager: Kevin Mulvey <kmulvey@linux.com>
+  changes:
+    - commit: 9b5a77f9f1c7e0f317da60c485223f50030e6b16
+      note: comments
+      author:
+        name: Kevin Mulvey
+        email: kmulvey@linux.com
+      committer:
+        name: Kevin Mulvey
+        email: kmulvey@linux.com
+    - commit: 6c6de0ab8583e97e352c82c5065427122a910ca1
+      note: ignore binary
+      author:
+        name: Kevin Mulvey
+        email: kmulvey@linux.com
+      committer:
+        name: Kevin Mulvey
+        email: kmulvey@linux.com
+    - commit: 4b842d1ddbe57c15ef2bb73708407833748bfbc7
+      note: oto/v2
+      author:
+        name: Kevin Mulvey
+        email: kmulvey@linux.com
+      committer:
+        name: Kevin Mulvey
+        email: kmulvey@linux.com
+    - commit: 868181ae50458123654d296e420fcd31bd175033
+      note: update deps
+      author:
+        name: Kevin Mulvey
+        email: kmulvey@linux.com
+      committer:
+        name: Kevin Mulvey
+        email: kmulvey@linux.com
+    - commit: 1956338050a70d90138d79f6f5a111528aa351bc
+      note: install deps
+      author:
+        name: Kevin Mulvey
+        email: kmulvey@linux.com
+      committer:
+        name: Kevin Mulvey
+        email: kmulvey@linux.com
+    - commit: 85708a3de657b07a950f0028fc0adc58fdcd9a4d
+      note: comment for now
+      author:
+        name: Kevin Mulvey
+        email: kmulvey@linux.com
+      committer:
+        name: Kevin Mulvey
+        email: kmulvey@linux.com
+    - commit: d6c0e9d99758dd7ac9c17e68431f0023a461efcc
+      note: build
+      author:
+        name: Kevin Mulvey
+        email: kmulvey@linux.com
+      committer:
+        name: Kevin Mulvey
+        email: kmulvey@linux.com
+    - commit: 2bc741137b2c91be59cf7e4d6b43303cd9c2396d
+      note: todo
+      author:
+        name: Kevin Mulvey
+        email: kmulvey@linux.com
+      committer:
+        name: Kevin Mulvey
+        email: kmulvey@linux.com
+    - commit: 5c5681956857b114eb9c70a463b8d373f9c04e1b
+      note: linting
+      author:
+        name: Kevin Mulvey
+        email: kmulvey@linux.com
+      committer:
+        name: Kevin Mulvey
+        email: kmulvey@linux.com
+    - commit: e123c0f4f6421d6f26f5f703d3753fba0ba1c273
+      note: cli opts and wire it up
+      author:
+        name: Kevin Mulvey
+        email: kmulvey@linux.com
+      committer:
+        name: Kevin Mulvey
+        email: kmulvey@linux.com
+    - commit: 0e9e1d5e50512b710a1dce2372bb69c2fa29f700
+      note: refactor
+      author:
+        name: Kevin Mulvey
+        email: kmulvey@linux.com
+      committer:
+        name: Kevin Mulvey
+        email: kmulvey@linux.com
+    - commit: 6d8ce9552d9626ae0dc8e4d1611b205935c99788
+      note: single working
+      author:
+        name: Kevin Mulvey
+        email: kmulvey@linux.com
+      committer:
+        name: Kevin Mulvey
+        email: kmulvey@linux.com
+    - commit: e52f3db07a64d83fecf3ac19be69011c7639894a
+      note: Initial commit
+      author:
+        name: Kevin Mulvey
+        email: kmulvey@linux.com
+      committer:
+        name: GitHub
+        email: noreply@github.com
