@@ -5,6 +5,9 @@ Convert text to speech using [AWS Polly](https://aws.amazon.com/polly/).
 
 ## Dependencies
 This depends on [oto](https://github.com/hajimehoshi/oto#prerequisite) which has some prerequisites.
+```
+sudo dnf install alsa-lib-devel
+```
 
 ## Examples
 ### Pipe text:
