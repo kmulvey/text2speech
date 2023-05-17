@@ -10,7 +10,7 @@ require (
 	github.com/hajimehoshi/go-mp3 v0.3.4
 	github.com/hajimehoshi/oto/v2 v2.4.0
 	github.com/mum4k/termdash v0.18.0
-	github.com/sirupsen/logrus v1.9.0
+	github.com/sirupsen/logrus v1.9.1
 	go.szostok.io/version v1.2.0
 )
 
