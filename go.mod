@@ -8,7 +8,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/polly v1.26.2
 	github.com/aws/aws-sdk-go-v2/service/s3 v1.37.0
 	github.com/hajimehoshi/go-mp3 v0.3.4
-	github.com/hajimehoshi/oto/v2 v2.4.0
+	github.com/hajimehoshi/oto/v2 v2.4.1
 	github.com/mum4k/termdash v0.18.0
 	github.com/sirupsen/logrus v1.9.3
 	go.szostok.io/version v1.2.0
@@ -36,7 +36,7 @@ require (
 	github.com/aws/smithy-go v1.13.5 // indirect
 	github.com/aymanbagabas/go-osc52/v2 v2.0.1 // indirect
 	github.com/dustin/go-humanize v1.0.1 // indirect
-	github.com/ebitengine/purego v0.3.2 // indirect
+	github.com/ebitengine/purego v0.4.0 // indirect
 	github.com/fatih/color v1.15.0 // indirect
 	github.com/gdamore/encoding v1.0.0 // indirect
 	github.com/gdamore/tcell/v2 v2.6.0 // indirect
