@@ -5,7 +5,7 @@ go 1.18
 require (
 	github.com/aws/aws-sdk-go-v2 v1.20.0
 	github.com/aws/aws-sdk-go-v2/config v1.18.27
-	github.com/aws/aws-sdk-go-v2/service/polly v1.26.2
+	github.com/aws/aws-sdk-go-v2/service/polly v1.29.0
 	github.com/aws/aws-sdk-go-v2/service/s3 v1.37.0
 	github.com/hajimehoshi/go-mp3 v0.3.4
 	github.com/hajimehoshi/oto/v2 v2.4.1
@@ -22,8 +22,8 @@ require (
 	github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.4.10 // indirect
 	github.com/aws/aws-sdk-go-v2/credentials v1.13.26 // indirect
 	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.13.4 // indirect
-	github.com/aws/aws-sdk-go-v2/internal/configsources v1.1.35 // indirect
-	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.4.29 // indirect
+	github.com/aws/aws-sdk-go-v2/internal/configsources v1.1.37 // indirect
+	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.4.31 // indirect
 	github.com/aws/aws-sdk-go-v2/internal/ini v1.3.35 // indirect
 	github.com/aws/aws-sdk-go-v2/internal/v4a v1.0.27 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.9.11 // indirect
