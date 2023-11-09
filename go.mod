@@ -3,7 +3,7 @@ module github.com/kmulvey/text2speech
 go 1.21
 
 require (
-	github.com/aws/aws-sdk-go-v2 v1.22.1
+	github.com/aws/aws-sdk-go-v2 v1.22.2
 	github.com/aws/aws-sdk-go-v2/config v1.19.1
 	github.com/aws/aws-sdk-go-v2/service/polly v1.34.0
 	github.com/aws/aws-sdk-go-v2/service/s3 v1.42.0
