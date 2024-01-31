@@ -9,7 +9,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/s3 v1.48.1
 	github.com/hajimehoshi/go-mp3 v0.3.4
 	github.com/hajimehoshi/oto/v2 v2.4.2
-	github.com/mum4k/termdash v0.18.0
+	github.com/mum4k/termdash v0.19.0
 	github.com/sirupsen/logrus v1.9.3
 	go.szostok.io/version v1.2.0
 )
@@ -39,7 +39,7 @@ require (
 	github.com/ebitengine/purego v0.5.0 // indirect
 	github.com/fatih/color v1.15.0 // indirect
 	github.com/gdamore/encoding v1.0.0 // indirect
-	github.com/gdamore/tcell/v2 v2.6.0 // indirect
+	github.com/gdamore/tcell/v2 v2.7.0 // indirect
 	github.com/goccy/go-yaml v1.11.2 // indirect
 	github.com/google/uuid v1.4.0 // indirect
 	github.com/hashicorp/go-version v1.6.0 // indirect
