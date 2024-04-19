@@ -17,8 +17,8 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/polly"
 	"github.com/aws/aws-sdk-go-v2/service/polly/types"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
+	"github.com/ebitengine/oto/v3"
 	"github.com/hajimehoshi/go-mp3"
-	"github.com/hajimehoshi/oto/v2"
 )
 
 // synthesizeText takes text and sends it to AWS polly for processing, the polly object containing the audio.
@@ -76,7 +76,12 @@ func play(sound io.Reader) error {
 		panic("mp3.NewDecoder failed: " + err.Error())
 	}
 
-	otoCtx, ready, err := oto.NewContext(decodedMp3.SampleRate(), 2, 2)
+	var options = &oto.NewContextOptions{
+		SampleRate:   decodedMp3.SampleRate(),
+		ChannelCount: 2,
+		Format:       oto.FormatSignedInt16LE,
+	}
+	otoCtx, ready, err := oto.NewContext(options)
 	if err != nil {
 		return fmt.Errorf("oto.NewContext: %w", err)
 	}
