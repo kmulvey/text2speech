@@ -6,9 +6,12 @@ builds:
   
   - id: text2speech
     main: .
+    env:
+      - CGO_ENABLED=0
     binary: text2speech
     ldflags:
       - -s -w
+      - -s -w -X main.build={{.Version}}
       - -X go.szostok.io/version.version={{.Version}}
       - -X go.szostok.io/version.buildDate={{.Date}}
     goos:
@@ -17,24 +20,29 @@ builds:
     goarch:
       - amd64
 
+release:
+  github:
+    owner: kmulvey
+    name: text2speech
+  # Whether to remove existing draft releases with the same name before creating
+  replace_existing_draft: true
+  # Whether to remove an artifact that already exists.
+  replace_existing_artifacts: true
+
 archives:
-  - id: foo
+  - id: dist
     name_template: >-
       {{ .ProjectName }}_
       {{- title .Os }}_
       {{- if eq .Arch "amd64" }}x86_64
       {{- else if eq .Arch "386" }}i386
       {{- else }}{{ .Arch }}{{ end }}
+
 checksum:
   name_template: 'checksums.txt'
+
 snapshot:
-  name_template: "{{ incpatch .Version }}-next"
-changelog:
-  sort: asc
-  filters:
-    exclude:
-      - '^docs:'
-      - '^test:'
+  name_template: "{{ incpatch .Version }}-snapshot"
 
 nfpms:
   # note that this is an array of nfpm configs
@@ -76,8 +84,6 @@ nfpms:
     # Path that the binaries should be installed.
     # Default: '/usr/bin'
     bindir: /usr/bin
-
-    changelog: ./changelog.yml
 
     # Custom configuration applied only to the RPM packager.
     rpm:
