@@ -13,7 +13,10 @@ builds:
       - -X go.szostok.io/version.version={{.Version}}
       - -X go.szostok.io/version.buildDate={{.Date}}
     goos:
+      - windows
+      - darwin
       - linux
+      - js
 
     goarch:
       - amd64
