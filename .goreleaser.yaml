@@ -6,8 +6,6 @@ builds:
   
   - id: text2speech
     main: .
-    env:
-      - CGO_ENABLED=0
     binary: text2speech
     ldflags:
       - -s -w
