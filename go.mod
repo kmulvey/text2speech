@@ -5,7 +5,7 @@ go 1.22.4
 require (
 	github.com/aws/aws-sdk-go-v2 v1.30.5
 	github.com/aws/aws-sdk-go-v2/config v1.27.33
-	github.com/aws/aws-sdk-go-v2/service/polly v1.43.1
+	github.com/aws/aws-sdk-go-v2/service/polly v1.43.3
 	github.com/aws/aws-sdk-go-v2/service/s3 v1.61.2
 	github.com/ebitengine/oto/v3 v3.2.0
 	github.com/hajimehoshi/go-mp3 v0.3.4
