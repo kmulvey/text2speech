@@ -33,8 +33,8 @@ github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.12.4 h1:tHxQi/XHP
 github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.12.4/go.mod h1:4GQbF1vJzG60poZqWatZlhP31y8PGCCVTvIGPdaaYJ0=
 github.com/aws/aws-sdk-go-v2/service/internal/s3shared v1.18.4 h1:E5ZAVOmI2apR8ADb72Q63KqwwwdW1XcMeXIlrZ1Psjg=
 github.com/aws/aws-sdk-go-v2/service/internal/s3shared v1.18.4/go.mod h1:wezzqVUOVVdk+2Z/JzQT4NxAU0NbhRe5W8pIE72jsWI=
-github.com/aws/aws-sdk-go-v2/service/polly v1.43.1 h1:5z6zJqTYqVHR0u6AlEbsWinlulO+WAHEIAthSIRazrg=
-github.com/aws/aws-sdk-go-v2/service/polly v1.43.1/go.mod h1:/wi/pMDamNplL/g3IoTJk4gv+JuWx4wqu68c37aXWaI=
+github.com/aws/aws-sdk-go-v2/service/polly v1.45.5 h1:C+F88sXQsYyvGODTv8VXd63NiNUAQb2V0EPoRW1YnI8=
+github.com/aws/aws-sdk-go-v2/service/polly v1.45.5/go.mod h1:6pSOmKi7Ka5tJLHq+VM4femIlFw44hPYxXjpxrjXk1g=
 github.com/aws/aws-sdk-go-v2/service/s3 v1.66.3 h1:neNOYJl72bHrz9ikAEED4VqWyND/Po0DnEx64RW6YM4=
 github.com/aws/aws-sdk-go-v2/service/s3 v1.66.3/go.mod h1:TMhLIyRIyoGVlaEMAt+ITMbwskSTpcGsCPDq91/ihY0=
 github.com/aws/aws-sdk-go-v2/service/sso v1.24.3 h1:UTpsIf0loCIWEbrqdLb+0RxnTXfWh2vhw4nQmFi4nPc=
