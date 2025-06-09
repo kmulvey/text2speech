@@ -6,7 +6,7 @@ require (
 	github.com/aws/aws-sdk-go-v2 v1.36.3
 	github.com/aws/aws-sdk-go-v2/config v1.29.14
 	github.com/aws/aws-sdk-go-v2/service/polly v1.48.2
-	github.com/aws/aws-sdk-go-v2/service/s3 v1.80.0
+	github.com/aws/aws-sdk-go-v2/service/s3 v1.80.1
 	github.com/ebitengine/oto/v3 v3.3.3
 	github.com/hajimehoshi/go-mp3 v0.3.4
 	github.com/mum4k/termdash v0.20.0
