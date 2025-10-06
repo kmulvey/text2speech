@@ -7,7 +7,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/config v1.29.17
 	github.com/aws/aws-sdk-go-v2/service/polly v1.48.4
 	github.com/aws/aws-sdk-go-v2/service/s3 v1.84.0
-	github.com/ebitengine/oto/v3 v3.3.3
+	github.com/ebitengine/oto/v3 v3.4.0
 	github.com/hajimehoshi/go-mp3 v0.3.4
 	github.com/mum4k/termdash v0.20.0
 	github.com/sirupsen/logrus v1.9.3
@@ -39,7 +39,7 @@ require (
 	github.com/aws/smithy-go v1.23.0 // indirect
 	github.com/aymanbagabas/go-osc52/v2 v2.0.1 // indirect
 	github.com/dustin/go-humanize v1.0.1 // indirect
-	github.com/ebitengine/purego v0.8.4 // indirect
+	github.com/ebitengine/purego v0.9.0 // indirect
 	github.com/fatih/color v1.18.0 // indirect
 	github.com/gdamore/encoding v1.0.1 // indirect
 	github.com/gdamore/tcell/v2 v2.8.1 // indirect
@@ -60,7 +60,7 @@ require (
 	github.com/spf13/cast v1.8.0 // indirect
 	github.com/spf13/pflag v1.0.6 // indirect
 	golang.org/x/crypto v0.38.0 // indirect
-	golang.org/x/sys v0.33.0 // indirect
+	golang.org/x/sys v0.36.0 // indirect
 	golang.org/x/term v0.32.0 // indirect
 	golang.org/x/text v0.25.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
