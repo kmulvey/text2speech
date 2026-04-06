@@ -2,15 +2,15 @@ version: 2
 
 before:
   hooks:
-    # You may remove this if you don't use go modules.
     - go mod tidy
-builds:
-  
+
+builds:  
   - id: text2speech
     main: .
+    env:
+      - CGO_ENABLED=0
     binary: text2speech
     ldflags:
-      - -s -w
       - -s -w -X main.build={{.Version}}
       - -X go.szostok.io/version.version={{.Version}}
       - -X go.szostok.io/version.buildDate={{.Date}}
@@ -19,7 +19,6 @@ builds:
       - darwin
       - linux
       - js
-
     goarch:
       - amd64
 
@@ -34,6 +33,8 @@ release:
 
 archives:
   - id: dist
+    ids:
+      - text2speech
     name_template: >-
       {{ .ProjectName }}_
       {{- title .Os }}_
@@ -45,7 +46,12 @@ checksum:
   name_template: 'checksums.txt'
 
 snapshot:
-  name_template: "{{ incpatch .Version }}-snapshot"
+  version_template: >-
+    {{- if .IsSnapshot -}}
+      {{ incpatch .Version }}-snapshot
+    {{- else -}}
+      {{ .Version }}
+    {{- end -}}
 
 nfpms:
   # note that this is an array of nfpm configs
@@ -53,6 +59,9 @@ nfpms:
     id: text2speech
 
     package_name: text2speech
+
+    ids:
+      - text2speech
 
     builds:
       - text2speech
