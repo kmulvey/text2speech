@@ -78,7 +78,10 @@ func deleteS3File(ctx context.Context, s3Client *s3.Client, bucket, key string) 
 		Bucket: aws.String(bucket),
 		Key:    aws.String(key),
 	})
-	return err
+	if err != nil {
+		return fmt.Errorf("s3 delete object: %w", err)
+	}
+	return nil
 }
 
 // EscapeFilePath escapes spaces in the filepath used for an exec() call

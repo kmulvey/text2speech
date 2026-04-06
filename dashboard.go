@@ -112,7 +112,9 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 	case progress.FrameMsg:
 		progressModel, cmd := m.progress.Update(msg)
-		m.progress = progressModel.(progress.Model)
+		if pm, ok := progressModel.(progress.Model); ok {
+			m.progress = pm
+		}
 		return m, cmd
 	}
 
@@ -120,10 +122,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 }
 
 func (m model) View() string {
-	remaining := m.grandTotal - m.grandElapsed
-	if remaining < 0 {
-		remaining = 0
-	}
+	remaining := max(m.grandTotal-m.grandElapsed, 0)
 
 	var pausedStr string
 	if m.paused {
@@ -176,5 +175,8 @@ func NewDashboard(ctx context.Context, cancel context.CancelFunc, playbackProgre
 		// context was cancelled by the completion/error path — not a real error
 		return nil
 	}
-	return err
+	if err != nil {
+		return fmt.Errorf("bubbletea program: %w", err)
+	}
+	return nil
 }

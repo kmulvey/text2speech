@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"slices"
 	"strings"
 	"sync/atomic"
 	"time"
@@ -35,35 +36,29 @@ func (p *PlaybackProgress) String() string {
 const MAX_CHAR_COUNT = 200_000  // this is a polly limit per job
 const DEFAULT_VOICE = "Matthew" // this can be overridden with cli flags
 
-func main() {
-	var ctx, cancel = context.WithCancel(context.Background())
+type cliOpts struct {
+	s3Bucket   string
+	awsProfile string
+	awsRegion  string
+	voiceID    string
+	inputFile  string
+	outputFile string
+	dashboard  bool
+}
 
-	log.SetFormatter(&log.TextFormatter{
-		FullTimestamp:   true,
-		TimestampFormat: "2006-01-02 15:04:05",
-	})
-
-	// get user opts
-	var s3Bucket string
-	var awsProfile string
-	var awsRegion string
-	var voiceID string
-	var inputFile string
-	var outputFile string
-	var dashboard bool
+func parseFlags() cliOpts {
+	var opts cliOpts
 	var v bool
-	flag.StringVar(&s3Bucket, "bucket", "", "s3 bucket to put the mp3 files")
-	flag.StringVar(&awsProfile, "profile", "default", "aws profile to use")
-	flag.StringVar(&awsRegion, "region", "us-west-2", "aws region to use")
-	flag.StringVar(&voiceID, "voice", "Matthew", "voice to use")
-	flag.StringVar(&inputFile, "input", "", "path the input text file, if this is specified STDIN will be ignored")
-	flag.StringVar(&outputFile, "output", "output.mp3", "path the save the mp3, this will NOT play the audio")
-	flag.BoolVar(&dashboard, "dashboard", false, "use a terminal dashboard")
+	flag.StringVar(&opts.s3Bucket, "bucket", "", "s3 bucket to put the mp3 files")
+	flag.StringVar(&opts.awsProfile, "profile", "default", "aws profile to use")
+	flag.StringVar(&opts.awsRegion, "region", "us-west-2", "aws region to use")
+	flag.StringVar(&opts.voiceID, "voice", "Matthew", "voice to use")
+	flag.StringVar(&opts.inputFile, "input", "", "path the input text file, if this is specified STDIN will be ignored")
+	flag.StringVar(&opts.outputFile, "output", "output.mp3", "path the save the mp3, this will NOT play the audio")
+	flag.BoolVar(&opts.dashboard, "dashboard", false, "use a terminal dashboard")
 	flag.BoolVar(&v, "version", false, "print version")
 	flag.BoolVar(&v, "v", false, "print version")
-
 	flag.Parse()
-
 	if v {
 		var verPrinter = printer.New()
 		var info = version.Get()
@@ -72,47 +67,37 @@ func main() {
 		}
 		os.Exit(0)
 	}
+	return opts
+}
 
-	// validate input
-	if strings.TrimSpace(s3Bucket) == "" {
+func validateOpts(opts cliOpts) {
+	if strings.TrimSpace(opts.s3Bucket) == "" {
 		log.Fatal("s3 bucket not spcecified")
 	}
-
-	if voiceID != DEFAULT_VOICE {
-		var voices = types.VoiceId("").Values()
-		var found bool
-		for _, voice := range voices {
-			if voice == types.VoiceId(voiceID) {
-				found = true
-				break
-			}
-		}
-		if !found {
-			log.Fatalf("VoiceID: %s is not an AWS Polly VoiceID", voiceID)
+	if opts.voiceID != DEFAULT_VOICE {
+		if !slices.Contains(types.VoiceId("").Values(), types.VoiceId(opts.voiceID)) {
+			log.Fatalf("VoiceID: %s is not an AWS Polly VoiceID", opts.voiceID)
 		}
 	}
+}
 
-	var text string
-	var err error
+func getInputText(inputFile string) string {
 	if strings.TrimSpace(inputFile) != "" {
 		b, err := os.ReadFile(strings.TrimSpace(inputFile))
 		if err != nil {
 			log.Fatalf("cannot read input file %s: %v", inputFile, err)
 		}
-		text = string(b)
-
-	} else {
-		text, err = readInput(os.Stdin)
-		if err != nil {
-			log.Fatalf("cannot read input %v", err)
-		}
+		return string(b)
 	}
-	if text == "" {
-		return
+	text, err := readInput(os.Stdin)
+	if err != nil {
+		log.Fatalf("cannot read input %v", err)
 	}
+	return text
+}
 
-	// create aws clients
-	awsConfig, err := config.LoadDefaultConfig(ctx, config.WithSharedConfigProfile(awsProfile), config.WithRegion(awsRegion))
+func run(ctx context.Context, cancel context.CancelFunc, opts cliOpts, text string) {
+	awsConfig, err := config.LoadDefaultConfig(ctx, config.WithSharedConfigProfile(opts.awsProfile), config.WithRegion(opts.awsRegion))
 	if err != nil {
 		log.Fatalf("failed to load SDK configuration, %v", err)
 	}
@@ -124,33 +109,49 @@ func main() {
 	var logs = make(chan string)
 	var pauseChan = make(chan bool, 1)
 
-	if !dashboard {
+	if !opts.dashboard {
 		go logOutput(playbackProgress, logs)
 	}
 
 	go playWithProgressBar(audioChan, playbackProgress, errors, pauseChan)
 	go func() {
-		if err := handleOutput(ctx, pollyClient, s3Client, audioChan, logs, s3Bucket, voiceID, text, outputFile); err != nil {
+		if err := handleOutput(ctx, pollyClient, s3Client, audioChan, logs, opts.s3Bucket, opts.voiceID, text, opts.outputFile); err != nil {
 			log.Fatalf("handleOutput error: %s", err.Error())
 		}
 	}()
 
-	if !dashboard {
+	if !opts.dashboard {
 		if err := <-errors; err != nil {
-			fmt.Println(err)
+			log.Error(err)
 		}
 		cancel()
-	} else {
-		go func() {
-			if err := <-errors; err != nil {
-				fmt.Println(err)
-			}
-			cancel()
-		}()
-		if err := NewDashboard(ctx, cancel, playbackProgress, logs, pauseChan); err != nil {
-			log.Fatalf("failed to create dashboard, %v", err)
-		}
+		return
 	}
+
+	go func() {
+		if err := <-errors; err != nil {
+			log.Error(err)
+		}
+		cancel()
+	}()
+	if err := NewDashboard(ctx, cancel, playbackProgress, logs, pauseChan); err != nil {
+		log.Fatalf("failed to create dashboard, %v", err)
+	}
+}
+
+func main() {
+	var ctx, cancel = context.WithCancel(context.Background())
+	log.SetFormatter(&log.TextFormatter{
+		FullTimestamp:   true,
+		TimestampFormat: "2006-01-02 15:04:05",
+	})
+	opts := parseFlags()
+	validateOpts(opts)
+	text := getInputText(opts.inputFile)
+	if text == "" {
+		return
+	}
+	run(ctx, cancel, opts, text)
 }
 
 // handleOutput synthesizes text and either writes the result to a file or a channel for playing. File writing and playing are exclusize and is determined by cli flags.
@@ -163,18 +164,18 @@ func handleOutput(ctx context.Context, pollyClient *polly.Client, s3Client *s3.C
 	for _, section := range textSections {
 		voice, s3File, err := synthesizeText(ctx, pollyClient, s3Client, logs, s3Bucket, voiceID, section)
 		if err != nil {
-			return fmt.Errorf("error from synthesisText: %v", err)
+			return fmt.Errorf("error from synthesisText: %w", err)
 		}
 
 		// output switch
 		if strings.TrimSpace(outputFile) != "output.mp3" {
 			body, err := io.ReadAll(voice.Body)
 			if err != nil {
-				return fmt.Errorf("error reading voice.Body: %v", err)
+				return fmt.Errorf("error reading voice.Body: %w", err)
 			}
 			//nolint:gosec
 			if err := os.WriteFile(outputFile, body, 0775); err != nil {
-				return fmt.Errorf("error writing file %v", err)
+				return fmt.Errorf("error writing file: %w", err)
 			}
 		} else {
 			audioChan <- voice
@@ -182,7 +183,7 @@ func handleOutput(ctx context.Context, pollyClient *polly.Client, s3Client *s3.C
 
 		// clean up s3 bucket
 		if err := deleteS3File(ctx, s3Client, s3Bucket, s3File); err != nil {
-			return fmt.Errorf("error deleting s3 files %v", err)
+			return fmt.Errorf("error deleting s3 files: %w", err)
 		}
 	}
 	close(audioChan)
@@ -205,47 +206,21 @@ func playWithProgressBar(audioChan chan *s3.GetObjectOutput, playbackProgress ch
 	}()
 
 	for voice := range audioChan {
-
-		// get the audio length using ffmpeg because polly doesnt return it
-		var tempFile = "ffmpeg-detect-length-temp-file.mp3"
-		ffmpegSound, err := io.ReadAll(voice.Body)
+		body, audioLength, err := prepareAudio(voice)
 		if err != nil {
-			errors <- fmt.Errorf("error reading voice.Body: %v", err)
-			close(errors)
-			return
-		}
-
-		voice.Body = io.NopCloser(bytes.NewBuffer(ffmpegSound))
-		//nolint:gosec
-		if err := os.WriteFile(tempFile, ffmpegSound, 0775); err != nil {
-			errors <- fmt.Errorf("error writing file %v", err)
-			close(errors)
-			return
-		}
-
-		audioLength, err := getDuration(tempFile)
-		if err != nil {
-			errors <- fmt.Errorf("error getting length from ffmpeg: %v", err)
-			close(errors)
-			return
-		}
-
-		if err := os.RemoveAll(tempFile); err != nil {
-			errors <- fmt.Errorf("error deleting temp file %v", err)
+			errors <- err
 			close(errors)
 			return
 		}
 
 		grandTotal += audioLength
-
-		// snapshot values for the goroutine closure
 		sectionLen := audioLength
 		baseElapsed := completedSeconds
 		total := grandTotal
 
 		// send per-second progress ticks for this section, freezing while paused
 		go func() {
-			for i := 0; i < sectionLen; i++ {
+			for i := range sectionLen {
 				for paused.Load() {
 					time.Sleep(50 * time.Millisecond)
 				}
@@ -259,7 +234,7 @@ func playWithProgressBar(audioChan chan *s3.GetObjectOutput, playbackProgress ch
 			}
 		}()
 
-		if err := play(voice.Body, &paused); err != nil {
+		if err := play(body, &paused); err != nil {
 			log.Fatalf("error playing audio %v", err)
 		}
 
@@ -267,6 +242,29 @@ func playWithProgressBar(audioChan chan *s3.GetObjectOutput, playbackProgress ch
 	}
 	close(errors)
 	close(playbackProgress)
+}
+
+// prepareAudio reads the voice body, writes it to a temp file to determine its
+// duration via ffmpeg, then returns a fresh reader and duration in seconds.
+func prepareAudio(voice *s3.GetObjectOutput) (io.Reader, int, error) {
+	const tempFile = "ffmpeg-detect-length-temp-file.mp3"
+
+	body, err := io.ReadAll(voice.Body)
+	if err != nil {
+		return nil, 0, fmt.Errorf("error reading voice.Body: %w", err)
+	}
+	//nolint:gosec
+	if err := os.WriteFile(tempFile, body, 0775); err != nil {
+		return nil, 0, fmt.Errorf("error writing temp file: %w", err)
+	}
+	audioLength, err := getDuration(tempFile)
+	if err != nil {
+		return nil, 0, fmt.Errorf("error getting length from ffmpeg: %w", err)
+	}
+	if err := os.RemoveAll(tempFile); err != nil {
+		return nil, 0, fmt.Errorf("error deleting temp file: %w", err)
+	}
+	return io.NopCloser(bytes.NewBuffer(body)), audioLength, nil
 }
 
 // logOutput is used to print logs if the dashboard is not in use.
@@ -283,13 +281,13 @@ func logOutput(playbackProgress chan PlaybackProgress, logs chan string) {
 			if progress.GrandElapsed > 0 && progress.GrandTotal > 0 {
 				pct = (float64(progress.GrandElapsed) / float64(progress.GrandTotal)) * 100.0
 			}
-			fmt.Printf("Progress: %.2f%% \n", pct)
-		case log, ok := <-logs:
+			log.Infof("Progress: %.2f%%", pct)
+		case logMsg, ok := <-logs:
 			if !ok {
 				logs = nil
 				continue
 			}
-			fmt.Printf("log: %s", log)
+			log.Info(logMsg)
 		}
 	}
 }
