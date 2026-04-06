@@ -8,6 +8,7 @@ import (
 	"io"
 	"os"
 	"strings"
+	"sync/atomic"
 	"time"
 
 	"github.com/aws/aws-sdk-go-v2/config"
@@ -21,12 +22,14 @@ import (
 
 // PlaybackProgress represents how far we have gotten in playing the audio
 type PlaybackProgress struct {
-	Total   int
-	Current int
+	Total        int // section total in seconds
+	Current      int // section elapsed in seconds
+	GrandTotal   int // running sum of all section durations resolved so far
+	GrandElapsed int // total seconds elapsed across all sections
 }
 
 func (p *PlaybackProgress) String() string {
-	return fmt.Sprintf("Total: %d, Current: %d", p.Total, p.Current)
+	return fmt.Sprintf("GrandElapsed: %d, GrandTotal: %d", p.GrandElapsed, p.GrandTotal)
 }
 
 const MAX_CHAR_COUNT = 200_000  // this is a polly limit per job
@@ -119,12 +122,13 @@ func main() {
 	var errors = make(chan error)
 	var playbackProgress = make(chan PlaybackProgress)
 	var logs = make(chan string)
+	var pauseChan = make(chan bool, 1)
 
 	if !dashboard {
 		go logOutput(playbackProgress, logs)
 	}
 
-	go playWithProgressBar(audioChan, playbackProgress, errors)
+	go playWithProgressBar(audioChan, playbackProgress, errors, pauseChan)
 	go func() {
 		if err := handleOutput(ctx, pollyClient, s3Client, audioChan, logs, s3Bucket, voiceID, text, outputFile); err != nil {
 			log.Fatalf("handleOutput error: %s", err.Error())
@@ -137,15 +141,13 @@ func main() {
 		}
 		cancel()
 	} else {
-		// this is a bit backwards because idealy NewDashboard would be run in a go routine above playWithProgressBar
-		// however the term.Run() call cannot be done in a goroutine so it must be last in this main().
 		go func() {
 			if err := <-errors; err != nil {
 				fmt.Println(err)
 			}
 			cancel()
 		}()
-		if _, err := NewDashboard(ctx, cancel, playbackProgress, logs); err != nil {
+		if err := NewDashboard(ctx, cancel, playbackProgress, logs, pauseChan); err != nil {
 			log.Fatalf("failed to create dashboard, %v", err)
 		}
 	}
@@ -189,7 +191,18 @@ func handleOutput(ctx context.Context, pollyClient *polly.Client, s3Client *s3.C
 }
 
 // playWithProgressBar manages the progess bar and plays the audio
-func playWithProgressBar(audioChan chan *s3.GetObjectOutput, playbackProgress chan PlaybackProgress, errors chan error) {
+func playWithProgressBar(audioChan chan *s3.GetObjectOutput, playbackProgress chan PlaybackProgress, errors chan error, pauseChan <-chan bool) {
+	var completedSeconds int
+	var grandTotal int
+	var paused atomic.Bool
+
+	// Forward pause signals from the channel into the shared atomic flag so both
+	// play() and the progress ticker goroutine can read it without racing.
+	go func() {
+		for p := range pauseChan {
+			paused.Store(p)
+		}
+	}()
 
 	for voice := range audioChan {
 
@@ -223,20 +236,34 @@ func playWithProgressBar(audioChan chan *s3.GetObjectOutput, playbackProgress ch
 			return
 		}
 
-		// get the progress bar going
+		grandTotal += audioLength
+
+		// snapshot values for the goroutine closure
+		sectionLen := audioLength
+		baseElapsed := completedSeconds
+		total := grandTotal
+
+		// send per-second progress ticks for this section, freezing while paused
 		go func() {
-			for i := 0; i < audioLength; i++ {
+			for i := 0; i < sectionLen; i++ {
+				for paused.Load() {
+					time.Sleep(50 * time.Millisecond)
+				}
 				playbackProgress <- PlaybackProgress{
-					Current: i,
-					Total:   audioLength,
+					Current:      i,
+					Total:        sectionLen,
+					GrandElapsed: baseElapsed + i,
+					GrandTotal:   total,
 				}
 				time.Sleep(time.Second)
 			}
 		}()
 
-		if err := play(voice.Body); err != nil {
+		if err := play(voice.Body, &paused); err != nil {
 			log.Fatalf("error playing audio %v", err)
 		}
+
+		completedSeconds += audioLength
 	}
 	close(errors)
 	close(playbackProgress)
@@ -253,8 +280,8 @@ func logOutput(playbackProgress chan PlaybackProgress, logs chan string) {
 			}
 			var pct float64
 			// dont divide by 0
-			if progress.Current > 0 && progress.Total > 0 {
-				pct = (float64(progress.Current) / float64(progress.Total)) * 100.0
+			if progress.GrandElapsed > 0 && progress.GrandTotal > 0 {
+				pct = (float64(progress.GrandElapsed) / float64(progress.GrandTotal)) * 100.0
 			}
 			fmt.Printf("Progress: %.2f%% \n", pct)
 		case log, ok := <-logs:

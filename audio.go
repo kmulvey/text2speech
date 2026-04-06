@@ -11,6 +11,7 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
+	"sync/atomic"
 	"time"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
@@ -67,8 +68,8 @@ func synthesizeText(ctx context.Context, pollyClient *polly.Client, s3Client *s3
 	return voice, path[2], err
 }
 
-// play does just that (using oto)
-func play(sound io.Reader) error {
+// play does just that (using oto). paused is a shared atomic flag: true = paused, false = playing.
+func play(sound io.Reader, paused *atomic.Bool) error {
 
 	// Decode file
 	var decodedMp3, err = mp3.NewDecoder(sound)
@@ -89,7 +90,19 @@ func play(sound io.Reader) error {
 
 	var player = otoCtx.NewPlayer(decodedMp3)
 	player.Play()
-	for player.IsPlaying() {
+	var isPaused bool
+	for {
+		if p := paused.Load(); p != isPaused {
+			isPaused = p
+			if isPaused {
+				player.Pause()
+			} else {
+				player.Play()
+			}
+		}
+		if !isPaused && !player.IsPlaying() {
+			break
+		}
 		time.Sleep(time.Millisecond)
 	}
 
