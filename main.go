@@ -33,7 +33,7 @@ func (p *PlaybackProgress) String() string {
 	return fmt.Sprintf("GrandElapsed: %d, GrandTotal: %d", p.GrandElapsed, p.GrandTotal)
 }
 
-const MAX_CHAR_COUNT = 200_000  // this is a polly limit per job
+const MAX_CHAR_COUNT = 100_000  // StartSpeechSynthesisTask limit (async) is 100k chars
 const DEFAULT_VOICE = "Matthew" // this can be overridden with cli flags
 
 type cliOpts struct {
@@ -106,7 +106,7 @@ func run(ctx context.Context, cancel context.CancelFunc, opts cliOpts, text stri
 	var audioChan = make(chan *s3.GetObjectOutput, 5)
 	var errors = make(chan error)
 	var playbackProgress = make(chan PlaybackProgress)
-	var logs = make(chan string)
+	var logs = make(chan string, 32)
 	var pauseChan = make(chan bool, 1)
 
 	if !opts.dashboard {
@@ -114,15 +114,18 @@ func run(ctx context.Context, cancel context.CancelFunc, opts cliOpts, text stri
 	}
 
 	go playWithProgressBar(audioChan, playbackProgress, errors, pauseChan)
+	// Use a buffered channel so the goroutine never blocks even if run() has already returned.
+	handleErrCh := make(chan error, 1)
 	go func() {
-		if err := handleOutput(ctx, pollyClient, s3Client, audioChan, logs, opts.s3Bucket, opts.voiceID, text, opts.outputFile); err != nil {
-			log.Fatalf("handleOutput error: %s", err.Error())
-		}
+		handleErrCh <- handleOutput(ctx, pollyClient, s3Client, audioChan, logs, opts.s3Bucket, opts.voiceID, text, opts.outputFile)
 	}()
 
 	if !opts.dashboard {
 		if err := <-errors; err != nil {
 			log.Error(err)
+		}
+		if err := <-handleErrCh; err != nil {
+			log.Fatal(err)
 		}
 		cancel()
 		return
@@ -136,6 +139,12 @@ func run(ctx context.Context, cancel context.CancelFunc, opts cliOpts, text stri
 	}()
 	if err := NewDashboard(ctx, cancel, playbackProgress, logs, pauseChan); err != nil {
 		log.Fatalf("failed to create dashboard, %v", err)
+	}
+	// Terminal is now restored. Check whether handleOutput reported an error
+	// and surface it to the user. This must be done here (not in a goroutine)
+	// to guarantee it runs before main() exits.
+	if err := <-handleErrCh; err != nil {
+		log.Error(err)
 	}
 }
 
@@ -156,6 +165,10 @@ func main() {
 
 // handleOutput synthesizes text and either writes the result to a file or a channel for playing. File writing and playing are exclusize and is determined by cli flags.
 func handleOutput(ctx context.Context, pollyClient *polly.Client, s3Client *s3.Client, audioChan chan *s3.GetObjectOutput, logs chan string, s3Bucket, voiceID, text, outputFile string) error {
+	// Always close both channels so consumers (playWithProgressBar, dashboard log
+	// pane) are never left blocked waiting when we return early with an error.
+	defer close(audioChan)
+	defer close(logs)
 
 	// splitting the input allows us to handle input that is larger than the max input size of polly (200k)
 	var textSections = splitInput(text)
@@ -164,6 +177,7 @@ func handleOutput(ctx context.Context, pollyClient *polly.Client, s3Client *s3.C
 	for _, section := range textSections {
 		voice, s3File, err := synthesizeText(ctx, pollyClient, s3Client, logs, s3Bucket, voiceID, section)
 		if err != nil {
+			logs <- fmt.Sprintf("ERROR: %v\n", err)
 			return fmt.Errorf("error from synthesisText: %w", err)
 		}
 
@@ -186,8 +200,6 @@ func handleOutput(ctx context.Context, pollyClient *polly.Client, s3Client *s3.C
 			return fmt.Errorf("error deleting s3 files: %w", err)
 		}
 	}
-	close(audioChan)
-	close(logs)
 	return nil
 }
 
@@ -235,7 +247,10 @@ func playWithProgressBar(audioChan chan *s3.GetObjectOutput, playbackProgress ch
 		}()
 
 		if err := play(body, &paused); err != nil {
-			log.Fatalf("error playing audio %v", err)
+			errors <- fmt.Errorf("error playing audio: %w", err)
+			close(errors)
+			close(playbackProgress)
+			return
 		}
 
 		completedSeconds += audioLength

@@ -41,35 +41,39 @@ func readInput(reader io.Reader) (string, error) {
 	return strings.TrimSpace(builder.String()), nil
 }
 
-// splitInput splits the text input into chunks less than MAX_CHAR_COUNT
-// which is the current polly limit per job.
+// splitInput splits the text input into chunks of at most MAX_CHAR_COUNT
+// characters, which is the current polly limit per job. It prefers to split
+// at sentence boundaries (". "), falling back to the last whitespace character.
 func splitInput(fulltext string) []string {
-	var numWords = len(strings.Fields(fulltext))
-
-	if numWords < MAX_CHAR_COUNT {
+	if len(fulltext) <= MAX_CHAR_COUNT {
 		return []string{fulltext}
 	}
 
 	var result []string
-	var fulltextWords = strings.FieldsFunc(fulltext, isSpace)
-	var lastEndIndex int
-	for i := MAX_CHAR_COUNT; i >= 0; i-- {
-		if strings.HasSuffix(fulltextWords[i], ".") {
-			result = append(result, strings.Join(fulltextWords[lastEndIndex:i+1], " "))
-			lastEndIndex = i + 1
-			i += MAX_CHAR_COUNT
-			if i >= len(fulltextWords) {
-				result = append(result, strings.Join(fulltextWords[lastEndIndex:], " "))
-				break
-			}
+	remaining := fulltext
+	for len(remaining) > MAX_CHAR_COUNT {
+		chunk := remaining[:MAX_CHAR_COUNT]
+
+		// prefer splitting at a sentence boundary
+		splitAt := strings.LastIndex(chunk, ". ")
+		if splitAt < 0 {
+			// fall back to last whitespace
+			splitAt = strings.LastIndexFunc(chunk, unicode.IsSpace)
 		}
+		if splitAt < 0 {
+			// hard split as last resort
+			splitAt = MAX_CHAR_COUNT
+		} else {
+			splitAt++ // include the trailing period/space in this chunk
+		}
+
+		result = append(result, strings.TrimSpace(remaining[:splitAt]))
+		remaining = strings.TrimSpace(remaining[splitAt:])
 	}
-
+	if remaining != "" {
+		result = append(result, remaining)
+	}
 	return result
-}
-
-func isSpace(c rune) bool {
-	return unicode.IsSpace(c)
 }
 
 // deleteS3File deletes the file that polly writes to s3 after we are done playing it.
