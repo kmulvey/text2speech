@@ -9,6 +9,8 @@ jobs:
   release:
     name: text2speech release
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
 
     steps:
       - uses: ConorMacBride/install-package@v1
