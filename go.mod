@@ -10,7 +10,7 @@ require (
 	github.com/charmbracelet/bubbles v1.0.0
 	github.com/charmbracelet/bubbletea v1.3.10
 	github.com/charmbracelet/lipgloss v1.1.0
-	github.com/ebitengine/oto/v3 v3.5.0-alpha.7
+	github.com/ebitengine/oto/v3 v3.5.0-alpha.8
 	github.com/hajimehoshi/go-mp3 v0.3.4
 	github.com/sirupsen/logrus v1.9.4
 	go.szostok.io/version v1.2.0
@@ -48,7 +48,7 @@ require (
 	github.com/clipperhouse/displaywidth v0.11.0 // indirect
 	github.com/clipperhouse/uax29/v2 v2.7.0 // indirect
 	github.com/dustin/go-humanize v1.0.1 // indirect
-	github.com/ebitengine/purego v0.10.0 // indirect
+	github.com/ebitengine/purego v0.10.1 // indirect
 	github.com/erikgeiser/coninput v0.0.0-20211004153227-1c3628e74d0f // indirect
 	github.com/fatih/color v1.19.0 // indirect
 	github.com/goccy/go-yaml v1.19.2 // indirect
